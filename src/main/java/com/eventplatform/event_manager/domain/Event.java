@@ -57,7 +57,6 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<NotificationTemplate> notificationTemplates;
 
-    // Извиква се автоматично САМО веднъж, при първоначален запис (SQL INSERT)
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
