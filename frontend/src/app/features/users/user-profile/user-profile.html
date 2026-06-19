@@ -1,0 +1,9 @@
+<h2>User Profile</h2>
+<p style="color: red">{{ errorMessage }}</p>
+<p><strong>Username:</strong> {{ user()?.username }}</p>
+<p><strong>Email:</strong> {{ user()?.email }}</p>
+<p><strong>Address:</strong> {{ user()?.address || 'No address' }}</p>
+<a routerLink="/profile/edit">Edit profile</a>
+<br><br>
+<button type="button" (click)="logout()">Logout</button>
+<button type="button" (click)="deleteProfile()">Delete profile</button>
