@@ -1,0 +1,50 @@
+<h2>My Notifications</h2>
+
+@if (errorMessage) {
+  <p class="error">{{ errorMessage }}</p>
+}
+
+<button type="button" (click)="toggleNotificationsView()"> {{ showAll ? 'Show unread' : 'Show all' }} </button>
+
+@if (hasUnreadNotifications()) {
+  <button type="button" (click)="markAllAsRead()">Mark all as read</button>
+}
+@if (notifications().length === 0 && !errorMessage) {
+  <p> {{ showAll ? 'No notifications yet.' : 'No unread notifications.' }} </p>
+}
+
+@for (notification of notifications(); track notification.id) {
+  <div class="notification-card">
+    <p>
+      <strong>Message:</strong>
+      {{ notification.message }}
+    </p>
+    <p>
+      <strong>Type:</strong>
+      {{ notification.type }}
+    </p>
+    <p>
+      <strong>Status:</strong>
+      {{ notification.status }}
+    </p>
+    <p>
+      <strong>Sent at:</strong>
+      {{ notification.sentAt }}
+    </p>
+    @if (notification.eventTitle) {
+      <p>
+        <strong>Event:</strong>
+        {{ notification.eventTitle }}
+      </p>
+    }
+    @if (notification.sessionTitle) {
+      <p>
+        <strong>Session:</strong>
+        {{ notification.sessionTitle }}
+      </p>
+    }
+    @if (notification.status !== 'READ') {
+      <button type="button" (click)="markAsRead(notification.id)">Mark as read</button>
+    }
+  </div>
+}

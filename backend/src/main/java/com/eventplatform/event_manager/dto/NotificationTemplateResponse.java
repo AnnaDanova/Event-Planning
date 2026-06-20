@@ -14,8 +14,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class NotificationTemplateResponse {
     private Long id;
-    private Long sessionId;
     private Long eventId;
+    private String eventTitle;
+    private Long sessionId;
+    private String sessionTitle;
     private String message;
     private LocalDateTime scheduledAt;
     private String type;

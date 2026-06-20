@@ -1,0 +1,22 @@
+<h2>Notification Templates</h2>
+@if (errorMessage) {
+  <p class="error">{{ errorMessage }}</p>
+}
+
+<a [routerLink]="['/events', eventId, 'notification-templates', 'create']">Create new template</a>
+
+@if (templates().length === 0) {
+  <p>No notification templates for this event.</p>
+}
+
+@for (template of templates(); track template.id) {
+  <div class="template-card">
+    <p><strong>Message:</strong> {{ template.message }}</p>
+    <p><strong>Type:</strong> {{ template.type }}</p>
+    <p><strong>Scheduled at:</strong> {{ template.scheduledAt }}</p>
+
+    @if (template.sessionId) {
+      <p><strong>Session:</strong> {{ template.sessionTitle }}</p>
+    }
+    <p><strong>Event:</strong> {{ template.eventTitle }}</p>  </div>
+}

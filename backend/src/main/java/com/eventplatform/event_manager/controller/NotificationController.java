@@ -2,6 +2,7 @@ package com.eventplatform.event_manager.controller;
 
 import com.eventplatform.event_manager.dto.NotificationResponse;
 import com.eventplatform.event_manager.service.NotificationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,5 +39,11 @@ public class NotificationController {
     public ResponseEntity<Void> markAllAsRead(@PathVariable Long userId) {
         notificationService.markAllNotificationsAsRead(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/send")
+    public ResponseEntity<NotificationResponse> sendNotification(@RequestParam Long userId, @RequestParam Long templateId) {
+        NotificationResponse response = notificationService.sendNotification(userId, templateId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

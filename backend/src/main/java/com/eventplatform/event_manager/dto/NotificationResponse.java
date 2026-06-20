@@ -14,5 +14,7 @@ public class NotificationResponse {
     private LocalDateTime sentAt;
     private String type;
     private Long eventId;
+    private String eventTitle;
     private Long sessionId;
+    private String sessionTitle;
 }
