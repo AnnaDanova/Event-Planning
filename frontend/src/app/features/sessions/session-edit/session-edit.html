@@ -1,0 +1,31 @@
+<h2>Edit Session</h2>
+
+@if (errorMessage) {
+  <p class="error">{{ errorMessage }}</p>
+}
+
+<form (ngSubmit)="updateSession()">
+
+  <div>
+    <label>Title</label>
+    <input type="text" name="title" [ngModel]="sessionData().title" (ngModelChange)="updateField('title', $event)" required>
+  </div>
+
+  <div>
+    <label>Description</label>
+    <textarea name="description" [ngModel]="sessionData().description" (ngModelChange)="updateField('description', $event)" required></textarea>
+  </div>
+
+  <div>
+    <label>Start time</label>
+    <input type="datetime-local" name="startTime" [ngModel]="sessionData().startTime" (ngModelChange)="updateField('startTime', $event)" required>
+  </div>
+
+  <div>
+    <label>End time</label>
+    <input type="datetime-local" name="endTime" [ngModel]="sessionData().endTime" (ngModelChange)="updateField('endTime', $event)" required>
+  </div>
+  <button type="submit">Save changes</button>
+</form>
+
+<a [routerLink]="['/events', eventId, 'sessions']">Back to sessions</a>

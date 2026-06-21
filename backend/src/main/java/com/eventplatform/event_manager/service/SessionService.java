@@ -49,7 +49,7 @@ public class SessionService {
 
     public SessionResponse updateSession(Long id, SessionCreateRequest request) {
         Session session = getSessionEntityById(id);
-        validateTime(request.getStartTime(), session.getStartTime());
+        validateTime(request.getStartTime(), request.getEndTime());
         if (request.getTitle() != null) {
             session.setTitle(request.getTitle());
         }

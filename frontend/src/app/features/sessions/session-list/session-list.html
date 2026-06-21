@@ -1,0 +1,35 @@
+<h2>Event Sessions</h2>
+
+@if (errorMessage) {
+  <p class="error">{{ errorMessage }}</p>
+}
+
+<a [routerLink]="['/events', eventId, 'sessions', 'create']">Create new session</a>
+
+@if (sessions().length === 0 && !errorMessage) {
+  <p>No sessions for this event yet.</p>
+}
+
+@for (session of sessions(); track session.id) {
+  <div class="session-card">
+    <h3>{{ session.title }}</h3>
+
+    <p><strong>Description:</strong> {{ session.description }}</p>
+    <p><strong>Start:</strong> {{ session.startTime }}</p>
+    <p><strong>End:</strong> {{ session.endTime }}</p>
+    <p><strong>Status:</strong> {{ session.status }}</p>
+
+    @if (session.speakers && session.speakers.length > 0) {
+      <p><strong>Speakers:</strong></p>
+      <ul>
+        @for (speaker of session.speakers; track speaker.id) {
+          <li>
+            {{ speaker.username }} - {{ speaker.email }}
+          </li>
+        }
+      </ul>
+    }
+    <a [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']">Edit</a>
+    <button type="button" (click)="deleteSession(session.id)">Delete</button>
+  </div>
+}
