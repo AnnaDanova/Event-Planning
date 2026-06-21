@@ -15,8 +15,8 @@
     <h3>{{ session.title }}</h3>
 
     <p><strong>Description:</strong> {{ session.description }}</p>
-    <p><strong>Start:</strong> {{ session.startTime }}</p>
-    <p><strong>End:</strong> {{ session.endTime }}</p>
+    <p><strong>Start:</strong> {{ session.startTime | date:'dd.MM.yyyy HH:mm' }}</p>
+    <p><strong>End:</strong> {{ session.endTime | date:'dd.MM.yyyy HH:mm' }}</p>
     <p><strong>Status:</strong> {{ session.status }}</p>
 
     @if (session.speakers && session.speakers.length > 0) {

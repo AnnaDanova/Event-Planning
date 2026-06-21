@@ -13,7 +13,7 @@
   <div class="template-card">
     <p><strong>Message:</strong> {{ template.message }}</p>
     <p><strong>Type:</strong> {{ template.type }}</p>
-    <p><strong>Scheduled at:</strong> {{ template.scheduledAt }}</p>
+    <p><strong>Scheduled at:</strong> {{ template.scheduledAt | date:'dd.MM.yyyy HH:mm' }}</p>
 
     @if (template.sessionId) {
       <p><strong>Session:</strong> {{ template.sessionTitle }}</p>

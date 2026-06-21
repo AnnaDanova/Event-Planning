@@ -29,7 +29,7 @@
     </p>
     <p>
       <strong>Sent at:</strong>
-      {{ notification.sentAt }}
+        {{ notification.sentAt | date:'dd.MM.yyyy HH:mm' }}
     </p>
     @if (notification.eventTitle) {
       <p>
