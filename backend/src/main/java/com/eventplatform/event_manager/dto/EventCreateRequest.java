@@ -1,4 +1,4 @@
-package com.eventplatform.event_manager.dto; // По-добра подредба на пакетите
+package com.eventplatform.event_manager.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
