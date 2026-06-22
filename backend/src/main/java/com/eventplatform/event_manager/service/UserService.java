@@ -93,7 +93,7 @@ public class UserService {
             return List.of();
         }
         String trimmedQuery = query.trim();
-        return userRepository.findByUsernameContainingIgnoreCaseOrEmailStartingWithIgnoreCase(trimmedQuery, trimmedQuery)
+        return userRepository.searchUsers(trimmedQuery)
                 .stream()
                 .map(userMapper::toResponse)
                 .toList();
