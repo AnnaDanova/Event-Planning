@@ -1,9 +1,11 @@
-<h2>User Profile</h2>
+<h2>Моят профил</h2>
 <p style="color: red">{{ errorMessage }}</p>
-<p><strong>Username:</strong> {{ user()?.username }}</p>
-<p><strong>Email:</strong> {{ user()?.email }}</p>
-<p><strong>Address:</strong> {{ user()?.address || 'No address' }}</p>
-<a routerLink="/profile/edit">Edit profile</a>
+<p><strong>Имена: </strong> {{ user()?.firstName }} {{ user()?.lastName }}</p>
+<p><strong>Потребителско име: </strong> {{ user()?.username }}</p>
+<p><strong>Описание/За мен: </strong> {{ user()?.bio }}</p>
+<p><strong>Имейл: </strong> {{ user()?.email }}</p>
+<p><strong>Населено място: </strong> {{ user()?.address || 'No address' }}</p>
+<a routerLink="/profile/edit">Редактиране на профила</a>
 <br><br>
-<button type="button" (click)="logout()">Logout</button>
-<button type="button" (click)="deleteProfile()">Delete profile</button>
+<button type="button" (click)="logout()">Изход</button>
+<button type="button" (click)="deleteProfile()">Изтриване на профила</button>

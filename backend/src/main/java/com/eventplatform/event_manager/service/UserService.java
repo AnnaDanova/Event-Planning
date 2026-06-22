@@ -10,6 +10,8 @@ import com.eventplatform.event_manager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -39,6 +41,9 @@ public class UserService {
         }
         User user = new User();
         user.setUsername(registerRequest.getUsername());
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setBio(registerRequest.getBio());
         user.setEmail(registerRequest.getEmail());
         user.setPasswordHash(registerRequest.getPassword());
         user.setAddress(registerRequest.getAddress());
@@ -60,6 +65,12 @@ public class UserService {
         if (userRequest.getEmail() != null) {
             user.setEmail(userRequest.getEmail());
         }
+        if (userRequest.getLastName() != null) {
+            user.setLastName(userRequest.getLastName());
+        }
+        if (userRequest.getBio() != null) {
+            user.setBio(userRequest.getBio());
+        }
         if (userRequest.getAddress() != null) {
             user.setAddress(userRequest.getAddress());
         }
@@ -75,5 +86,16 @@ public class UserService {
             throw new RuntimeException("Потребителят не съществува!");
         }
         userRepository.deleteById(id);
+    }
+
+    public List<UserResponse> searchUsers(String query) {
+        if (query == null || query.trim().length() < 2) {
+            return List.of();
+        }
+        String trimmedQuery = query.trim();
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailStartingWithIgnoreCase(trimmedQuery, trimmedQuery)
+                .stream()
+                .map(userMapper::toResponse)
+                .toList();
     }
 }

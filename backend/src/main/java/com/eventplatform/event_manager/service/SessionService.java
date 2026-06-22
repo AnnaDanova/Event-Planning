@@ -6,6 +6,7 @@ import com.eventplatform.event_manager.domain.User;
 import com.eventplatform.event_manager.domain.enums.SessionStatus;
 import com.eventplatform.event_manager.dto.SessionCreateRequest;
 import com.eventplatform.event_manager.dto.SessionResponse;
+import com.eventplatform.event_manager.dto.SpeakerResponse;
 import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.mapper.SessionMapper;
 import com.eventplatform.event_manager.mapper.UserMapper;
@@ -91,12 +92,12 @@ public class SessionService {
         sessionRepository.save(session);
     }
 
-    public List<UserResponse> getSpeakersBySessionId(Long sessionId) {
+    public List<SpeakerResponse> getSpeakersBySessionId(Long sessionId) {
         Session session = getSessionEntityById(sessionId);
 
         return session.getSpeakers()
                 .stream()
-                .map(userMapper::toResponse)
+                .map(userMapper::toSpeakerResponse)
                 .toList();
     }
 

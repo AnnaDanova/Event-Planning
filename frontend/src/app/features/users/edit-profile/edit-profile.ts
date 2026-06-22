@@ -17,6 +17,8 @@ export class EditProfile implements OnInit {
   userId: number | null = null;
 
   updateData = signal<UserUpdateRequest> ({
+    lastName: '',
+    bio: '',
     email: '',
     address: '',
     profilePhoto: ''
@@ -41,6 +43,8 @@ export class EditProfile implements OnInit {
     this.userService.getUserById(loggedUser.id).subscribe({
       next: (user) => {
         this.updateData.set({
+          lastName: loggedUser.lastName,
+          bio: loggedUser.bio ?? '',
           email: user.email,
           address: user.address || '',
           profilePhoto: user.profilePhoto || ''

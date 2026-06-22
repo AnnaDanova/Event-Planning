@@ -1,22 +1,22 @@
-<h2>Notification Templates</h2>
+<h2>Шаблони за известия</h2>
 @if (errorMessage) {
   <p class="error">{{ errorMessage }}</p>
 }
 
-<a [routerLink]="['/events', eventId, 'notification-templates', 'create']">Create new template</a>
+<a [routerLink]="['/events', eventId, 'notification-templates', 'create']">Създаване на нов шаблон</a>
 
 @if (templates().length === 0) {
-  <p>No notification templates for this event.</p>
+  <p>Все още няма създадени шаблони за това събитие.</p>
 }
 
 @for (template of templates(); track template.id) {
   <div class="template-card">
-    <p><strong>Message:</strong> {{ template.message }}</p>
-    <p><strong>Type:</strong> {{ template.type }}</p>
-    <p><strong>Scheduled at:</strong> {{ template.scheduledAt | date:'dd.MM.yyyy HH:mm' }}</p>
+    <p><strong>Съобщение: </strong> {{ template.message }}</p>
+    <p><strong>Тип: </strong> {{ template.type }}</p>
+    <p><strong>Насрочено за: </strong> {{ template.scheduledAt | date:'dd.MM.yyyy, HH:mm' }}</p>
 
     @if (template.sessionId) {
-      <p><strong>Session:</strong> {{ template.sessionTitle }}</p>
+      <p><strong>Сесия: </strong> {{ template.sessionTitle }}</p>
     }
-    <p><strong>Event:</strong> {{ template.eventTitle }}</p>  </div>
+    <p><strong>Събитие: </strong> {{ template.eventTitle }}</p>  </div>
 }

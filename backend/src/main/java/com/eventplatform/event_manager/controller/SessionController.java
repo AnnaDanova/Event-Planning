@@ -1,6 +1,7 @@
 package com.eventplatform.event_manager.controller;
 import com.eventplatform.event_manager.dto.SessionCreateRequest;
 import com.eventplatform.event_manager.dto.SessionResponse;
+import com.eventplatform.event_manager.dto.SpeakerResponse;
 import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.service.SessionService;
 import jakarta.validation.Valid;
@@ -54,7 +55,7 @@ public class SessionController {
     }
 
     @GetMapping("/{sessionId}/speakers")
-    public ResponseEntity<List<UserResponse>> getSessionSpeakers(@PathVariable Long sessionId) {
+    public ResponseEntity<List<SpeakerResponse>> getSessionSpeakers(@PathVariable Long sessionId) {
         return ResponseEntity.ok(sessionService.getSpeakersBySessionId(sessionId));
     }
 

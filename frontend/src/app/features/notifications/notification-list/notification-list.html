@@ -1,50 +1,50 @@
-<h2>My Notifications</h2>
+<h2>Моите известия</h2>
 
 @if (errorMessage) {
   <p class="error">{{ errorMessage }}</p>
 }
 
-<button type="button" (click)="toggleNotificationsView()"> {{ showAll ? 'Show unread' : 'Show all' }} </button>
+<button type="button" (click)="toggleNotificationsView()"> {{ showAll ? 'Непрочетени' : 'Всички' }} </button>
 
 @if (hasUnreadNotifications()) {
-  <button type="button" (click)="markAllAsRead()">Mark all as read</button>
+  <button type="button" (click)="markAllAsRead()">Отбележи всички като прочетени</button>
 }
 @if (notifications().length === 0 && !errorMessage) {
-  <p> {{ showAll ? 'No notifications yet.' : 'No unread notifications.' }} </p>
+  <p> {{ showAll ? 'Няма налични известия.' : 'Няма нови известия.' }} </p>
 }
 
 @for (notification of notifications(); track notification.id) {
   <div class="notification-card">
     <p>
-      <strong>Message:</strong>
+      <strong>Съобщение: </strong>
       {{ notification.message }}
     </p>
     <p>
-      <strong>Type:</strong>
+      <strong>Тип: </strong>
       {{ notification.type }}
     </p>
     <p>
-      <strong>Status:</strong>
+      <strong>Статус: </strong>
       {{ notification.status }}
     </p>
     <p>
-      <strong>Sent at:</strong>
-        {{ notification.sentAt | date:'dd.MM.yyyy HH:mm' }}
+      <strong>Изпратено на: </strong>
+        {{ notification.sentAt | date:'dd.MM.yyyy, HH:mm' }}
     </p>
     @if (notification.eventTitle) {
       <p>
-        <strong>Event:</strong>
+        <strong>Събитие: </strong>
         {{ notification.eventTitle }}
       </p>
     }
     @if (notification.sessionTitle) {
       <p>
-        <strong>Session:</strong>
+        <strong>Сесия: </strong>
         {{ notification.sessionTitle }}
       </p>
     }
     @if (notification.status !== 'READ') {
-      <button type="button" (click)="markAsRead(notification.id)">Mark as read</button>
+      <button type="button" (click)="markAsRead(notification.id)">Отбележи като прочетено</button>
     }
   </div>
 }

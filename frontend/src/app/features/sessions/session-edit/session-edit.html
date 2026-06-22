@@ -1,31 +1,54 @@
-<h2>Edit Session</h2>
+<h2>Редактиране на сесия</h2>
 
 @if (errorMessage) {
   <p class="error">{{ errorMessage }}</p>
 }
 
 <form (ngSubmit)="updateSession()">
-
   <div>
-    <label>Title</label>
+    <label>Тема: </label>
     <input type="text" name="title" [ngModel]="sessionData().title" (ngModelChange)="updateField('title', $event)" required>
   </div>
-
   <div>
-    <label>Description</label>
+    <label>Описание: </label>
     <textarea name="description" [ngModel]="sessionData().description" (ngModelChange)="updateField('description', $event)" required></textarea>
   </div>
-
   <div>
-    <label>Start time</label>
+    <label>Начален час: </label>
     <input type="datetime-local" name="startTime" [ngModel]="sessionData().startTime" (ngModelChange)="updateField('startTime', $event)" required>
   </div>
-
   <div>
-    <label>End time</label>
+    <label>Краен час: </label>
     <input type="datetime-local" name="endTime" [ngModel]="sessionData().endTime" (ngModelChange)="updateField('endTime', $event)" required>
   </div>
-  <button type="submit">Save changes</button>
+
+  <label for="speakerSearch">Добави лектор</label>
+  <input id="speakerSearch" name="speakerSearch" type="text" [(ngModel)]="speakerSearch" (input)="searchSpeakers()" placeholder="Търси по име или имейл"/>
+  @if (speakerResults().length > 0) {
+    <div>
+      @for (user of speakerResults(); track user.id) {
+        <button type="button" (click)="addSpeaker(user)"> {{ user.firstName }} {{ user.lastName }} - {{ user.email }}</button>
+      }
+    </div>
+  }
+  <div>
+    Добавени лектори:
+    @if (currentSpeakers().length === 0) {
+      <p>Няма добавени лектори.</p>
+    } @else {
+      @for (speaker of currentSpeakers(); track speaker.id) {
+        <div>
+          {{ speaker.fullName }}
+          @if (speaker.bio) {
+            <span> - {{ speaker.bio }}</span>
+          }
+          <button type="button" (click)="removeSpeaker(speaker.id)">Премахни</button>
+        </div>
+      }
+    }
+  </div>
+
+  <button type="submit">Запази промените</button>
 </form>
 
-<a [routerLink]="['/events', eventId, 'sessions']">Back to sessions</a>
+<a [routerLink]="['/events', eventId, 'sessions']">Назад към всички сесии</a>

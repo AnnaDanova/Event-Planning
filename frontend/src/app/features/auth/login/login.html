@@ -1,19 +1,19 @@
-<h2>Login</h2>
+<h2>Вход</h2>
 
 <form (ngSubmit)="login()">
   <div>
-    <label>Email</label>
+    <label>Имейл: </label>
     <input type="email" name="email" [(ngModel)]="loginData.email" required>
   </div>
 
   <div>
-    <label>Password</label>
+    <label>Парола: </label>
     <input type="password" name="password" [(ngModel)]="loginData.password" required>
   </div>
 
-  <button type="submit">Login</button>
+  <button type="submit">Влез</button>
 </form>
 
 <p style="color: red">{{ errorMessage }}</p>
 
-<a routerLink="/register">Don't have an account? Register</a>
+<a routerLink="/register">Все още нямаш акаунт? Регистрирай се тук</a>

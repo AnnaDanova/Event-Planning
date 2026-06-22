@@ -1,35 +1,33 @@
-<h2>Event Sessions</h2>
+<h2>Събития</h2>
 
 @if (errorMessage) {
   <p class="error">{{ errorMessage }}</p>
 }
-
-<a [routerLink]="['/events', eventId, 'sessions', 'create']">Create new session</a>
-
+<a [routerLink]="['/events', eventId, 'sessions', 'create']">Добави нова сесия</a>
 @if (sessions().length === 0 && !errorMessage) {
-  <p>No sessions for this event yet.</p>
+  <p>Няма добавени сесии за това събитие.</p>
 }
 
 @for (session of sessions(); track session.id) {
   <div class="session-card">
-    <h3>{{ session.title }}</h3>
+    <h3>Тема: {{ session.title }}</h3>
 
-    <p><strong>Description:</strong> {{ session.description }}</p>
-    <p><strong>Start:</strong> {{ session.startTime | date:'dd.MM.yyyy HH:mm' }}</p>
-    <p><strong>End:</strong> {{ session.endTime | date:'dd.MM.yyyy HH:mm' }}</p>
-    <p><strong>Status:</strong> {{ session.status }}</p>
+    <p><strong>Описание: </strong> {{ session.description }}</p>
+    <p><strong>Начало: </strong> {{ session.startTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+    <p><strong>Край: </strong> {{ session.endTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+    <p><strong>Статус: </strong> {{ session.status }}</p>
 
-    @if (session.speakers && session.speakers.length > 0) {
-      <p><strong>Speakers:</strong></p>
-      <ul>
-        @for (speaker of session.speakers; track speaker.id) {
-          <li>
-            {{ speaker.username }} - {{ speaker.email }}
-          </li>
-        }
-      </ul>
-    }
-    <a [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']">Edit</a>
-    <button type="button" (click)="deleteSession(session.id)">Delete</button>
+    <div>
+      <strong>Лектори:</strong>
+      @if (!sessionSpeakers()[session.id] || sessionSpeakers()[session.id].length === 0) {
+        <span>Няма добавени лектори.</span>
+      }
+      @for (speaker of sessionSpeakers()[session.id]; track speaker.id) {
+        <span>{{ speaker.fullName }}</span>
+      }
+    </div>
+
+    <a [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']">Редактиране</a>
+    <button type="button" (click)="deleteSession(session.id)">Изтриване</button>
   </div>
 }

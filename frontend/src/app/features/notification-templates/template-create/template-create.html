@@ -1,29 +1,29 @@
-<h2>Create Notification Template</h2>
+<h2>Създаване на шаблон за известие</h2>
 @if (errorMessage) {
   <p class="error">{{ errorMessage }}</p>
 }
 <form (ngSubmit)="createTemplate()">
   <div>
-    <label>Message</label>
+    <label>Съобщение: </label>
     <textarea name="message" [(ngModel)]="templateData.message" required></textarea>
   </div>
   <div>
-    <label>Scheduled at</label>
+    <label>Дата и час на изпращане: </label>
     <input type="datetime-local" name="scheduledAt" [(ngModel)]="templateData.scheduledAt" required>
   </div>
   <div>
-    <label>Type</label>
+    <label>Тип: </label>
     <select name="type" [(ngModel)]="templateData.type" required>
-      <option value="EVENT_REMINDER">Event reminder</option>
-      <option value="SESSION_STARTING">SessionService starting</option>
-      <option value="SPEAKER_BRIEFING">Speaker briefing</option>
-      <option value="SCHEDULE_CHANGED">Schedule changed</option>
-      <option value="EVENT_CANCELLED">Event cancelled</option>
-      <option value="TICKET_CONFIRMED">Ticket confirmed</option>
-      <option value="PAYMENT_FAILED">Payment failed</option>
-      <option value="FEEDBACK_REQUEST">Feedback request</option>
+      <option value="EVENT_REMINDER">Предстоящо събитие</option>
+      <option value="SESSION_STARTING">Сесията започва скоро</option>
+      <option value="SPEAKER_BRIEFING">Напомняне за лектор</option>
+      <option value="SCHEDULE_CHANGED">Промяна в програмата</option>
+      <option value="EVENT_CANCELLED">Отмяна на събитие</option>
+      <option value="TICKET_CONFIRMED">Успешна покупка на билет</option>
+      <option value="PAYMENT_FAILED">Проблем с плащането</option>
+      <option value="FEEDBACK_REQUEST">Вашето мнение е важно за нас</option>
     </select>
   </div>
-  <button type="submit">Create</button>
+  <button type="submit">Създаване</button>
 </form>
-<a [routerLink]="['/events', eventId, 'notification-templates']"> Back to templates</a>
+<a [routerLink]="['/events', eventId, 'notification-templates']">Назад към всички шаблони</a>

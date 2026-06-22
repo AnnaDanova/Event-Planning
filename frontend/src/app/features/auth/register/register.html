@@ -1,30 +1,38 @@
-<h2>Register</h2>
+<h2>Създаване на профил</h2>
 
 <form (ngSubmit)="register()">
   <div>
-    <label>Username</label>
+    <label>Потребителско име: </label>
     <input type="text" name="username" [(ngModel)]="registerData.username" required>
   </div>
-
   <div>
-    <label>Email</label>
+    <label for="firstName">Име: </label>
+    <input id="firstName" name="firstName" type="text" [(ngModel)]="registerData.firstName" required/>
+  </div>
+  <div>
+    <label for="lastName">Фамилия: </label>
+    <input id="lastName" name="lastName" type="text" [(ngModel)]="registerData.lastName" required/>
+  </div>
+  <div>
+    <label for="bio">Описание/За мен: </label>
+    <textarea id="bio" name="bio" [(ngModel)]="registerData.bio" rows="4"></textarea>
+  </div>
+  <div>
+    <label>Имейл: </label>
     <input type="email" name="email" [(ngModel)]="registerData.email" required>
   </div>
-
   <div>
-    <label>Password</label>
+    <label>Парола: </label>
     <input type="password" name="password" [(ngModel)]="registerData.password" required>
   </div>
-
   <div>
-    <label>Address</label>
+    <label>Населено място: </label>
     <input type="text" name="address" [(ngModel)]="registerData.address">
   </div>
-
-  <button type="submit">Register</button>
+  <button type="submit">Регистрация</button>
 </form>
 
 <p style="color: green">{{ successMessage }}</p>
 <p style="color: red">{{ errorMessage }}</p>
 
-<a routerLink="/login">Already have an account? Login</a>
+<a routerLink="/login">Вече имаш акаунт? Влез тук.</a>

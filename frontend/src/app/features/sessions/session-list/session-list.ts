@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { SessionService } from '../../../core/services/session.service';
 import { SessionResponse } from '../../../core/models/session.model';
+import { SpeakerResponse } from '../../../core/models/speaker.model';
 
 @Component({
   selector: 'app-session-list',
@@ -14,6 +15,7 @@ import { SessionResponse } from '../../../core/models/session.model';
 export class SessionList implements OnInit {
 
   sessions = signal<SessionResponse[]>([]);
+  sessionSpeakers = signal<Record<number, SpeakerResponse[]>>({});
   eventId!: number;
   errorMessage = '';
 
@@ -31,10 +33,27 @@ export class SessionList implements OnInit {
     this.sessionService.getSessionsByEventId(this.eventId).subscribe({
       next: (response) => {
         this.sessions.set(response);
+        response.forEach(session=> {
+          this.loadSpeakers(session.id);
+        });
       },
       error: (err) => {
         console.log('SESSION LIST ERROR:', err);
         this.errorMessage = 'Could not load sessions.';
+      }
+    });
+  }
+
+  loadSpeakers(sessionId: number): void {
+    this.sessionService.getSpeakersBySessionId(this.eventId, sessionId).subscribe({
+      next: (speakers) => {
+        this.sessionSpeakers.update(current => ({
+          ...current,
+          [sessionId]: speakers
+        }));
+      },
+      error: (err) => {
+        console.log('LOAD SPEAKERS ERROR:', err);
       }
     });
   }

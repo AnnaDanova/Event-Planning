@@ -1,22 +1,30 @@
-<h2>Edit Profile</h2>
+<h2>Редактиране на профила</h2>
 
 <p style="color: green">{{ successMessage }}</p>
 <p style="color: red">{{ errorMessage }}</p>
 
 <form (ngSubmit)="updateProfile()">
   <div>
-    <label>Email</label>
+    <label for="lastName">Фамилия: </label>
+    <input id="lastName" name="lastName" type="text" [(ngModel)]="updateData().lastName" required/>
+  </div>
+  <div>
+    <label for="bio">Описание/За мен: </label>
+    <textarea id="bio" name="bio" [(ngModel)]="updateData().bio" rows="4"></textarea>
+  </div>
+  <div>
+    <label>Имейл: </label>
     <input type="email" name="email" [(ngModel)]="updateData().email" required>
   </div>
   <div>
-    <label>Address</label>
+    <label>Населено място: </label>
     <input type="text" name="address" [(ngModel)]="updateData().address">
   </div>
   <div>
-    <label>Profile photo URL</label>
+    <label>Профилна снимка: </label>
     <input type="text" name="profilePhoto" [(ngModel)]="updateData().profilePhoto">
   </div>
-  <button type="submit">Save changes</button>
+  <button type="submit">Запазване на промените</button>
 </form>
 <br>
-<a routerLink="/profile">Back to profile</a>
+<a routerLink="/profile">Назад към профила</a>

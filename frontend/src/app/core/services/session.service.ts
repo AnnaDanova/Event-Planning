@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SessionCreateRequest, SessionResponse } from '../models/session.model';
+import { SpeakerResponse } from '../models/speaker.model';
 
 @Injectable({providedIn: 'root'})
 export class SessionService {
@@ -37,5 +38,9 @@ export class SessionService {
 
   removeSpeakerFromSession(eventId: number, sessionId: number, speakerId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers/${speakerId}`);
+  }
+
+  getSpeakersBySessionId(eventId: number, sessionId: number): Observable<SpeakerResponse[]> {
+    return this.http.get<SpeakerResponse[]>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers`);
   }
 }

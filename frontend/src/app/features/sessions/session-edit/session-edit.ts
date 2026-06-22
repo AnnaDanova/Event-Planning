@@ -4,6 +4,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { SessionService } from '../../../core/services/session.service';
 import { SessionCreateRequest } from '../../../core/models/session.model';
+import { UserService } from '../../../core/services/user.service';
+import { UserResponse } from '../../../core/models/user.model';
+import { SpeakerResponse } from '../../../core/models/speaker.model';
 
 @Component({
   selector: 'app-session-edit',
@@ -15,6 +18,9 @@ export class SessionEdit implements OnInit {
 
   eventId!: number;
   sessionId!: number;
+  speakerSearch = '';
+  speakerResults = signal<UserResponse[]>([]);
+  currentSpeakers = signal<SpeakerResponse[]>([]);
 
   sessionData = signal<SessionCreateRequest>({
     title: '',
@@ -22,13 +28,13 @@ export class SessionEdit implements OnInit {
     startTime: '',
     endTime: ''
   });
-
   errorMessage = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +42,7 @@ export class SessionEdit implements OnInit {
     this.sessionId = Number(this.route.snapshot.paramMap.get('sessionId'));
 
     this.loadSession();
+    this.loadSpeakers();
   }
 
   loadSession(): void {
@@ -51,6 +58,81 @@ export class SessionEdit implements OnInit {
       error: (err) => {
         console.log('LOAD SESSION ERROR:', err);
         this.errorMessage = 'Could not load session.';
+      }
+    });
+  }
+
+  loadSpeakers(): void {
+    this.sessionService.getSpeakersBySessionId(this.eventId, this.sessionId).subscribe({
+      next: (speakers) => {
+        this.currentSpeakers.set(speakers);
+      },
+      error: (err) => {
+        console.log('LOAD SPEAKERS ERROR:', err);
+        this.errorMessage = 'Could not load speakers.';
+      }
+    });
+  }
+
+  searchSpeakers(): void {
+    const query = this.speakerSearch.trim();
+    if (query.length < 2) {
+      this.speakerResults.set([]);
+      return;
+    }
+    this.userService.searchUsers(query).subscribe({
+      next: (users) => {
+        this.speakerResults.set(users);
+      },
+      error: (err) => {
+        console.log('SEARCH SPEAKERS ERROR:', err);
+      }
+    });
+  }
+
+  addSpeaker(user: UserResponse): void {
+    const alreadyAdded = this.currentSpeakers().some(speaker => speaker.id === user.id);
+    if (alreadyAdded) {
+      this.speakerSearch = '';
+      this.speakerResults.set([]);
+      return;
+    }
+    this.sessionService.addSpeakerToSession(this.eventId, this.sessionId, user.id).subscribe({
+      next: () => {
+        this.currentSpeakers.update(speakers => [
+          ...speakers,
+          {
+            id: user.id,
+            fullName: `${user.firstName} ${user.lastName}`,
+            bio: user.bio,
+            profilePhoto: user.profilePhoto
+          }
+        ]);
+
+        this.speakerSearch = '';
+        this.speakerResults.set([]);
+      },
+      error: (err) => {
+        console.log('ADD SPEAKER ERROR:', err);
+        this.errorMessage = 'Could not add speaker.';
+      }
+    });
+  }
+
+  removeSpeaker(speakerId: number): void {
+    this.sessionService.removeSpeakerFromSession(
+      this.eventId,
+      this.sessionId,
+      speakerId
+    ).subscribe({
+      next: () => {
+        this.currentSpeakers.update(speakers =>
+          speakers.filter(speaker => speaker.id !== speakerId)
+        );
+      },
+      error: (err) => {
+        console.log('REMOVE SPEAKER ERROR:', err);
+        this.errorMessage = 'Could not remove speaker.';
       }
     });
   }
@@ -78,7 +160,6 @@ export class SessionEdit implements OnInit {
     if (!dateValue) {
       return '';
     }
-
     return dateValue.slice(0, 16);
   }
 }

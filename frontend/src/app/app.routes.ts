@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { Home } from './features/home/home';
 import { Register } from './features/auth/register/register';
 import { Login } from './features/auth/login/login';
 import { UserProfile} from './features/users/user-profile/user-profile';
@@ -22,5 +23,5 @@ export const routes: Routes = [
   { path: 'notifications', component: NotificationList},
   { path: 'events/:eventId/notification-templates/create', component: TemplateCreate},
   { path: 'events/:eventId/notification-templates', component: TemplateList},
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: '', component: Home }
 ];
