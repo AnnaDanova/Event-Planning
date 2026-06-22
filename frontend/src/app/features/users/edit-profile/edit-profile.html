@@ -21,8 +21,13 @@
     <input type="text" name="address" [(ngModel)]="updateData().address">
   </div>
   <div>
-    <label>Профилна снимка: </label>
-    <input type="text" name="profilePhoto" [(ngModel)]="updateData().profilePhoto">
+    <label for="profilePhotoFile">Профилна снимка</label>
+    <input id="profilePhotoFile" type="file" accept="image/*" (change)="onFileSelected($event)"/>
+    @if (updateData().profilePhoto) {
+      <div>
+        <img [src]="'http://localhost:8080' + updateData().profilePhoto" alt="Профилна снимка" width="120"/>
+      </div>
+    }
   </div>
   <button type="submit">Запазване на промените</button>
 </form>

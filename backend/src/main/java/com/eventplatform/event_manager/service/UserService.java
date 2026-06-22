@@ -8,9 +8,17 @@ import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.dto.UserUpdateRequest;
 import com.eventplatform.event_manager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Service
 @RequiredArgsConstructor
@@ -97,5 +105,21 @@ public class UserService {
                 .stream()
                 .map(userMapper::toResponse)
                 .toList();
+    }
+
+    public UserResponse uploadProfilePhoto(Long userId, MultipartFile file) {
+        User user = getUserEntityById(userId);
+        try {
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads/profile-photos");
+            Files.createDirectories(uploadPath);
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            user.setProfilePhoto("/uploads/profile-photos/" + fileName);
+            userRepository.save(user);
+            return userMapper.toResponse(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not upload profile photo.", e);
+        }
     }
 }

@@ -5,6 +5,10 @@
 <p><strong>Описание/За мен: </strong> {{ user()?.bio }}</p>
 <p><strong>Имейл: </strong> {{ user()?.email }}</p>
 <p><strong>Населено място: </strong> {{ user()?.address || 'No address' }}</p>
+@if (user()?.profilePhoto) {
+  <img [src]="'http://localhost:8080' + user()?.profilePhoto" alt="Профилна снимка" width="150"/>
+}
+<br>
 <a routerLink="/profile/edit">Редактиране на профила</a>
 <br><br>
 <button type="button" (click)="logout()">Изход</button>
