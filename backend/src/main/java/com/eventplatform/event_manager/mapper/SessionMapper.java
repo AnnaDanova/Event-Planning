@@ -26,10 +26,14 @@ public class SessionMapper {
                     .map(userMapper::toResponse)
                     .toList();
         }
-        List<SessionMaterialResponse> materials = session.getMaterials()
-                        .stream()
-                        .map(sessionMaterialMapper::toResponse)
-                        .toList();
+        List<SessionMaterialResponse> materials = List.of();
+
+        if (session.getMaterials() != null) {
+            materials = session.getMaterials()
+                    .stream()
+                    .map(sessionMaterialMapper::toResponse)
+                    .toList();
+        }
 
         return new SessionResponse(session.getId(),
                 session.getTitle(),

@@ -1,35 +1,51 @@
-<h2>Редактиране на профила</h2>
+<section class="page">
+  <form class="form-card" (ngSubmit)="updateProfile()">
 
-<p style="color: green">{{ successMessage }}</p>
-<p style="color: red">{{ errorMessage }}</p>
+    <h2>Редактиране на профила</h2>
 
-<form (ngSubmit)="updateProfile()">
-  <div>
-    <label for="lastName">Фамилия: </label>
-    <input id="lastName" name="lastName" type="text" [(ngModel)]="updateData().lastName" required/>
-  </div>
-  <div>
-    <label for="bio">Описание/За мен: </label>
-    <textarea id="bio" name="bio" [(ngModel)]="updateData().bio" rows="4"></textarea>
-  </div>
-  <div>
-    <label>Имейл: </label>
-    <input type="email" name="email" [(ngModel)]="updateData().email" required>
-  </div>
-  <div>
-    <label>Населено място: </label>
-    <input type="text" name="address" [(ngModel)]="updateData().address">
-  </div>
-  <div>
-    <label for="profilePhotoFile">Профилна снимка</label>
-    <input id="profilePhotoFile" type="file" accept="image/*" (change)="onFileSelected($event)"/>
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
+    }
+
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+
+    <div class="form-group">
+      <label for="lastName">Фамилия</label>
+      <input id="lastName" name="lastName" type="text" [(ngModel)]="updateData().lastName" required>
+    </div>
+
+    <div class="form-group">
+      <label for="bio">Описание / За мен</label>
+      <textarea id="bio" name="bio" [(ngModel)]="updateData().bio" rows="4"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Имейл</label>
+      <input type="email" name="email" [(ngModel)]="updateData().email" required>
+    </div>
+
+    <div class="form-group">
+      <label>Населено място</label>
+      <input type="text" name="address" [(ngModel)]="updateData().address">
+    </div>
+
+    <div class="form-group">
+      <label for="profilePhotoFile">Профилна снимка</label>
+      <input id="profilePhotoFile" type="file" accept="image/*" (change)="onFileSelected($event)">
+    </div>
+
     @if (updateData().profilePhoto) {
-      <div>
-        <img [src]="'http://localhost:8080' + updateData().profilePhoto" alt="Профилна снимка" width="120"/>
+      <div class="item-card">
+        <img [src]="'http://localhost:8080' + updateData().profilePhoto" alt="Профилна снимка" width="120">
       </div>
     }
-  </div>
-  <button type="submit">Запазване на промените</button>
-</form>
-<br>
-<a routerLink="/profile">Назад към профила</a>
+
+    <div class="actions">
+      <button type="submit">Запазване на промените</button>
+      <a class="btn btn-secondary" routerLink="/profile">Назад</a>
+    </div>
+
+  </form>
+</section>

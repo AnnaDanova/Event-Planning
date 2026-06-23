@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-
+import { authGuard } from './core/guards/auth.guard';
+import { NotAuthorized } from './features/errors/not-authorized/not-authorized';
 import { Home } from './features/home/home';
 import { Register } from './features/auth/register/register';
 import { Login } from './features/auth/login/login';
@@ -15,13 +16,14 @@ import { TemplateCreate } from './features/notification-templates/template-creat
 export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'login', component: Login },
-  { path: 'profile', component: UserProfile },
-  { path: 'profile/edit', component: EditProfile},
-  { path: 'events/:eventId/sessions', component: SessionList},
-  { path: 'events/:eventId/sessions/create', component: SessionCreate},
-  { path: 'events/:eventId/sessions/:sessionId/edit', component: SessionEdit},
-  { path: 'notifications', component: NotificationList},
-  { path: 'events/:eventId/notification-templates/create', component: TemplateCreate},
-  { path: 'events/:eventId/notification-templates', component: TemplateList},
+  { path: 'profile', component: UserProfile, canActivate: [authGuard]},
+  { path: 'profile/edit', component: EditProfile, canActivate: [authGuard]},
+  { path: 'events/:eventId/sessions', component: SessionList, canActivate: [authGuard]},
+  { path: 'events/:eventId/sessions/create', component: SessionCreate, canActivate: [authGuard]},
+  { path: 'events/:eventId/sessions/:sessionId/edit', component: SessionEdit, canActivate: [authGuard]},
+  { path: 'notifications', component: NotificationList, canActivate: [authGuard]},
+  { path: 'events/:eventId/notification-templates/create', component: TemplateCreate,canActivate: [authGuard]},
+  { path: 'events/:eventId/notification-templates', component: TemplateList,canActivate: [authGuard]},
+  { path: 'not-authorized', component: NotAuthorized },
   { path: '', component: Home }
 ];

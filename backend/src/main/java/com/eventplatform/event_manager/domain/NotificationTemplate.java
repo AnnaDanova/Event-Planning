@@ -32,6 +32,9 @@ public class NotificationTemplate {
     @Column(name = "scheduled_at", nullable = false)
     private LocalDateTime scheduledAt;
 
+    @Column(nullable = false)
+    private Boolean sent = false;
+
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
