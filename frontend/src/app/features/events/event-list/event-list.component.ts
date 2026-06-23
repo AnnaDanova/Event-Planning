@@ -1,0 +1,45 @@
+import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { EventService } from '../../../core/services/event.service';
+import { EventShortResponse } from '../../../core/models/event.model';
+
+@Component({
+  selector: 'app-event-list',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './event-list.component.html',
+  styleUrls: ['./event-list.component.css']
+})
+export class EventListComponent implements OnInit {
+  events = signal<EventShortResponse[]>([]);
+  isLoading = signal(true);
+  errorMessage = signal('');
+
+  constructor(private eventService: EventService) {}
+
+  ngOnInit(): void {
+    this.loadEvents();
+  }
+
+  loadEvents(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.eventService.getAllEvents().subscribe({
+      next: (data) => {
+        this.events.set(data);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Грешка при зареждане на събитията:', err);
+
+        this.errorMessage.set(
+          'Неуспешно свързване с бекенда. Проверете дали Spring Boot работи.'
+        );
+
+        this.isLoading.set(false);
+      }
+    });
+  }
+}

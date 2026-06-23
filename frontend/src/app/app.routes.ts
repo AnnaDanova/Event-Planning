@@ -12,10 +12,14 @@ import { SessionEdit } from './features/sessions/session-edit/session-edit';
 import { NotificationList} from './features/notifications/notification-list/notification-list';
 import { TemplateList} from './features/notification-templates/template-list/template-list';
 import { TemplateCreate } from './features/notification-templates/template-create/template-create';
+import { EventListComponent } from './features/events/event-list/event-list.component';
+import { EventCreateComponent } from './features/events/event-create/event-create';
 
 export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'login', component: Login },
+  { path: 'events', component: EventListComponent },
+  { path: 'events/create', component: EventCreateComponent }
   { path: 'profile', component: UserProfile, canActivate: [authGuard]},
   { path: 'profile/edit', component: EditProfile, canActivate: [authGuard]},
   { path: 'events/:eventId/sessions', component: SessionList, canActivate: [authGuard]},

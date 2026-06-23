@@ -20,7 +20,7 @@ public class TicketMapper {
                 event.getId(),
                 event.getTitle(),
                 event.getVenue(),
-                event.getDateTime(),
+                event.getStartTime(),
                 category.getName(),
                 category.getPrice(),
                 ticket.getPurchaseDate(),

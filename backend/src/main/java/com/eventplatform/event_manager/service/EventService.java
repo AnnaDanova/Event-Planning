@@ -39,14 +39,15 @@ public class EventService {
 
     @Transactional
     public EventDetailsResponse createEvent(EventCreateRequest req) {
-        validateEventData(req.getTitle(), req.getCapacity(), req.getDateTime());
+        validateEventData(req.getTitle(), req.getCapacity(), req.getStartTime(), req.getEndTime());
         User organizer = userService.getUserEntityById(req.getOrganizerId());
         Event event = new Event();
         event.setTitle(req.getTitle());
         event.setDescription(req.getDescription());
         event.setVenue(req.getVenue());
         event.setCategory(req.getCategory());
-        event.setDateTime(req.getDateTime());
+        event.setStartTime(req.getStartTime());
+        event.setEndTime(req.getEndTime());
         event.setCapacity(req.getCapacity());
         event.setStatus(EventStatus.CONFIRMED);
         event.setOrganizer(organizer);
@@ -58,7 +59,7 @@ public class EventService {
     @Transactional
     public EventDetailsResponse updateEvent(Long eventId, EventCreateRequest req) {
         Event event = getEventEntityById(eventId);
-        validateEventData(req.getTitle(), req.getCapacity(), req.getDateTime());
+        validateEventData(req.getTitle(), req.getCapacity(), req.getStartTime(), req.getEndTime());
         if (req.getTitle() != null) {
             event.setTitle(req.getTitle());
         }
@@ -71,7 +72,8 @@ public class EventService {
         if (req.getCategory() != null) {
             event.setCategory(req.getCategory());
         }
-        event.setDateTime(req.getDateTime());
+        event.setStartTime(req.getStartTime());
+        event.setEndTime(req.getEndTime());
         if (req.getCapacity() != null) {
             event.setCapacity(req.getCapacity());
         }
@@ -86,18 +88,24 @@ public class EventService {
         eventRepository.delete(toDelete);
     }
 
-    private void validateEventData(String title, Integer capacity, LocalDateTime dateTime) {
+    private void validateEventData(String title, Integer capacity, LocalDateTime startTime, LocalDateTime endTime) {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Заглавието на събитието не може да бъде празно!");
         }
         if (capacity == null || capacity <= 0) {
             throw new IllegalArgumentException("Капацитетът на събитието трябва да бъде по-голям от 0!");
         }
-        if (dateTime == null) {
-            throw new IllegalArgumentException("Трябва да посочите дата и час за събитието!");
+        if (startTime == null) {
+            throw new IllegalArgumentException("Трябва да посочите дата и час на започване на събитието!");
         }
-        if (dateTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Датата на събитието не може да бъде в миналото!");
+        if (endTime == null) {
+            throw new IllegalArgumentException("Трябва да посочите дата и час на приключване на събитието!");
+        }
+        if (startTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Датата и часът на започване на събитието са невалидни!");
+        }
+        if (endTime.isBefore(LocalDateTime.now()) || endTime.isBefore(startTime)) {
+            throw new IllegalArgumentException("Датата и часът на приключване на събитието са невалидни!");
         }
     }
 }
