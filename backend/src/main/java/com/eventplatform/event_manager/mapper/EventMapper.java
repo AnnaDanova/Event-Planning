@@ -22,7 +22,8 @@ public class EventMapper {
         EventShortResponse response = new EventShortResponse();
         response.setId(event.getId());
         response.setTitle(event.getTitle());
-        response.setDateTime(event.getDateTime());
+        response.setStartTime(event.getStartTime());
+        response.setEndTime(event.getEndTime());
         response.setVenue(event.getVenue());
         response.setCategory(String.valueOf(event.getCategory()));
         response.setStatus(event.getStatus().toString());
@@ -46,7 +47,8 @@ public class EventMapper {
         response.setDescription(event.getDescription());
         response.setVenue(event.getVenue());
         response.setCategory(String.valueOf(event.getCategory()));
-        response.setDateTime(event.getDateTime());
+        response.setStartTime(event.getStartTime());
+        response.setEndTime(event.getEndTime());
         response.setCapacity(event.getCapacity());
         response.setStatus(event.getStatus());
 

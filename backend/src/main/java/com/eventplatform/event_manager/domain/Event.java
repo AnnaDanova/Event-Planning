@@ -30,7 +30,12 @@ public class Event {
     private EventCategory category;
 
     private Integer capacity;
+
+    @Column(nullable = false)
     private String venue;
+
+    private Double latitude;
+    private Double longitude;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -40,8 +45,11 @@ public class Event {
     @JoinColumn(name = "organizer_id", nullable = false)
     private User organizer;
 
-    @Column(name = "date_time", nullable = false)
-    private LocalDateTime dateTime;
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
 
     @Column(name = "image_data")
     private String imageData;

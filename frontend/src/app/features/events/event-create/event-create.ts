@@ -20,7 +20,8 @@ export class EventCreateComponent {
     venue: '',
     category: '',
     capacity: 0,
-    dateTime: '',
+    startTime: '',
+    endTime: '',
     status: 'CONFIRMED',
     organizerId: 1 // TODO: remove organizerId - used for testing or with authservice
   };

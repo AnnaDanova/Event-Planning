@@ -43,8 +43,13 @@
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Дата и час</label>
-      <input type="datetime-local" class="form-control" [(ngModel)]="event.dateTime" name="dateTime" required>
+      <label class="form-label">Начални дата и час</label>
+      <input type="datetime-local" class="form-control" [(ngModel)]="event.startTime" name="startTime" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Крайни дата и час</label>
+      <input type="datetime-local" class="form-control" [(ngModel)]="event.endTime" name="endTime" required>
     </div>
 
     <button type="submit" class="btn btn-primary">Създай</button>

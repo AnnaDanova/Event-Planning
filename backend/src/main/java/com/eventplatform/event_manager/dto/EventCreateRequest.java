@@ -32,9 +32,13 @@ public class EventCreateRequest {
     @NotNull(message = "Категорията е задължителна!")
     private EventCategory category;
 
-    @NotNull(message = "Датата и часът са задължителни!")
+    @NotNull(message = "Датата и часът на започване са задължителни!")
     @Future(message = "Събитието трябва да бъде в бъдещето!")
-    private LocalDateTime dateTime;
+    private LocalDateTime startTime;
+
+    @NotNull(message = "Датата и часът на приключване на събитието са задължителни!")
+    @Future(message = "Събитието трябва да бъде в бъдещето!")
+    private LocalDateTime endTime;
 
     @NotNull(message = "Капацитетът е задължителен!")
     @Min(value = 1, message = "Капацитетът на събитието трябва да е поне 1 човек.")

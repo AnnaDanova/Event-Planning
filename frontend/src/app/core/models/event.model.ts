@@ -4,7 +4,8 @@ export interface EventCreateRequest {
   description: string;
   venue: string;
   category: string;
-  dateTime: string;
+  startTime: string;
+  endTime: string;
   capacity: number;
 }
 
@@ -12,7 +13,8 @@ export interface EventShortResponse {
   id: number;
   title: string;
   venue: string;
-  dateTime: string;
+  startTime: string;
+  endTime: string;
   category: string;
   status: string;
   lowestPrice: number;
@@ -23,7 +25,8 @@ export interface EventDetailsResponse {
   title: string;
   description: string;
   venue: string;
-  dateTime: string;
+  startTime: string;
+  endTime: string;
   category: string;
   status: string;
   organizerName: string;
