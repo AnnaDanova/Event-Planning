@@ -20,4 +20,14 @@ export class UserService {
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  searchUsers(query: string): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(`${this.apiUrl}/search?query=${query}`);
+  }
+
+  uploadProfilePhoto(userId: number, file: File): Observable<UserResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<UserResponse>(`${this.apiUrl}/${userId}/profile-photo`, formData);
+  }
 }

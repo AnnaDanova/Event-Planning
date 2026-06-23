@@ -1,30 +1,53 @@
-<h2>Register</h2>
+<section class="page">
+  <form class="form-card" (ngSubmit)="register()">
+    <h1>Създаване на профил</h1>
 
-<form (ngSubmit)="register()">
-  <div>
-    <label>Username</label>
-    <input type="text" name="username" [(ngModel)]="registerData.username" required>
-  </div>
+    @if (successMessage) {
+      <p class="success-message">{{ successMessage }}</p>
+    }
 
-  <div>
-    <label>Email</label>
-    <input type="email" name="email" [(ngModel)]="registerData.email" required>
-  </div>
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
 
-  <div>
-    <label>Password</label>
-    <input type="password" name="password" [(ngModel)]="registerData.password" required>
-  </div>
+    <div class="form-group">
+      <label for="username">Потребителско име</label>
+      <input id="username" name="username" type="text" [(ngModel)]="registerData.username" required />
+    </div>
 
-  <div>
-    <label>Address</label>
-    <input type="text" name="address" [(ngModel)]="registerData.address">
-  </div>
+    <div class="form-group">
+      <label for="firstName">Име</label>
+      <input id="firstName" name="firstName" type="text" [(ngModel)]="registerData.firstName" required />
+    </div>
 
-  <button type="submit">Register</button>
-</form>
+    <div class="form-group">
+      <label for="lastName">Фамилия</label>
+      <input id="lastName" name="lastName" type="text" [(ngModel)]="registerData.lastName" required />
+    </div>
 
-<p style="color: green">{{ successMessage }}</p>
-<p style="color: red">{{ errorMessage }}</p>
+    <div class="form-group">
+      <label for="bio">Описание / За мен</label>
+      <textarea id="bio" name="bio" rows="4" [(ngModel)]="registerData.bio"></textarea>
+    </div>
 
-<a routerLink="/login">Already have an account? Login</a>
+    <div class="form-group">
+      <label for="email">Имейл</label>
+      <input id="email" name="email" type="email" [(ngModel)]="registerData.email" required />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Парола</label>
+      <input id="password" name="password" type="password" [(ngModel)]="registerData.password" required />
+    </div>
+
+    <div class="form-group">
+      <label for="address">Населено място</label>
+      <input id="address" name="address" type="text" [(ngModel)]="registerData.address" />
+    </div>
+
+    <div class="actions">
+      <button type="submit">Регистрация</button>
+      <a routerLink="/login" class="btn btn-secondary">Вход</a>
+    </div>
+  </form>
+</section>

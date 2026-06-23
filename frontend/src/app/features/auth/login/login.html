@@ -1,19 +1,24 @@
-<h2>Login</h2>
+<section class="page">
+  <form class="form-card" (ngSubmit)="login()">
+    <h1>Вход</h1>
 
-<form (ngSubmit)="login()">
-  <div>
-    <label>Email</label>
-    <input type="email" name="email" [(ngModel)]="loginData.email" required>
-  </div>
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
 
-  <div>
-    <label>Password</label>
-    <input type="password" name="password" [(ngModel)]="loginData.password" required>
-  </div>
+    <div class="form-group">
+      <label for="email">Имейл</label>
+      <input id="email" name="email" type="email" [(ngModel)]="loginData.email" required />
+    </div>
 
-  <button type="submit">Login</button>
-</form>
+    <div class="form-group">
+      <label for="password">Парола</label>
+      <input id="password" name="password" type="password" [(ngModel)]="loginData.password" required />
+    </div>
 
-<p style="color: red">{{ errorMessage }}</p>
-
-<a routerLink="/register">Don't have an account? Register</a>
+    <div class="actions">
+      <button type="submit">Влез</button>
+      <a routerLink="/register" class="btn btn-secondary">Регистрация</a>
+    </div>
+  </form>
+</section>

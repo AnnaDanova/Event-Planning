@@ -8,7 +8,18 @@ import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.dto.UserUpdateRequest;
 import com.eventplatform.event_manager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public User getUserEntityById(Long id) {
         return userRepository.findById(id)
@@ -39,8 +51,11 @@ public class UserService {
         }
         User user = new User();
         user.setUsername(registerRequest.getUsername());
+        user.setFirstName(registerRequest.getFirstName());
+        user.setLastName(registerRequest.getLastName());
+        user.setBio(registerRequest.getBio());
         user.setEmail(registerRequest.getEmail());
-        user.setPasswordHash(registerRequest.getPassword());
+        user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
         user.setAddress(registerRequest.getAddress());
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
@@ -49,8 +64,8 @@ public class UserService {
     public UserResponse login(UserLoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Грешен имейл!"));
-        if (!user.getPasswordHash().equals(loginRequest.getPassword())) {
-            throw new RuntimeException("Грешна парола!");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Invalid credentials");
         }
         return userMapper.toResponse(user);
     }
@@ -59,6 +74,12 @@ public class UserService {
         User user = getUserEntityById(id);
         if (userRequest.getEmail() != null) {
             user.setEmail(userRequest.getEmail());
+        }
+        if (userRequest.getLastName() != null) {
+            user.setLastName(userRequest.getLastName());
+        }
+        if (userRequest.getBio() != null) {
+            user.setBio(userRequest.getBio());
         }
         if (userRequest.getAddress() != null) {
             user.setAddress(userRequest.getAddress());
@@ -75,5 +96,32 @@ public class UserService {
             throw new RuntimeException("Потребителят не съществува!");
         }
         userRepository.deleteById(id);
+    }
+
+    public List<UserResponse> searchUsers(String query) {
+        if (query == null || query.trim().length() < 2) {
+            return List.of();
+        }
+        String trimmedQuery = query.trim();
+        return userRepository.searchUsers(trimmedQuery)
+                .stream()
+                .map(userMapper::toResponse)
+                .toList();
+    }
+
+    public UserResponse uploadProfilePhoto(Long userId, MultipartFile file) {
+        User user = getUserEntityById(userId);
+        try {
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads/profile-photos");
+            Files.createDirectories(uploadPath);
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            user.setProfilePhoto("/uploads/profile-photos/" + fileName);
+            userRepository.save(user);
+            return userMapper.toResponse(user);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not upload profile photo.", e);
+        }
     }
 }

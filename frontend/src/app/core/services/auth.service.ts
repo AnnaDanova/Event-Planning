@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {UserLoginRequest, UserRegisterRequest, UserResponse} from '../models/user.model';
@@ -7,6 +7,8 @@ import {UserLoginRequest, UserRegisterRequest, UserResponse} from '../models/use
 export class AuthService {
 
   private apiUrl = 'http://localhost:8080/api/users';
+
+  loggedUser = signal<UserResponse | null>(this.getLoggedUser());
 
   constructor(private http: HttpClient) {}
 
@@ -20,6 +22,7 @@ export class AuthService {
 
   saveLoggedUser(user: UserResponse): void {
     localStorage.setItem('loggedUser', JSON.stringify(user));
+    this.loggedUser.set(user);
   }
 
   getLoggedUser(): UserResponse | null {
@@ -32,6 +35,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('loggedUser');
+    this.loggedUser.set(null);
   }
 
   isLoggedIn(): boolean {

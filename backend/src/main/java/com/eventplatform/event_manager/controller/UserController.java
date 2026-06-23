@@ -5,6 +5,9 @@ import com.eventplatform.event_manager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -41,5 +44,17 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserResponse>> searchUsers(@RequestParam String query) {
+        return ResponseEntity.ok(userService.searchUsers(query));
+    }
+
+    @PostMapping("/{userId}/profile-photo")
+    public ResponseEntity<UserResponse> uploadProfilePhoto(
+            @PathVariable Long userId,
+            @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(userService.uploadProfilePhoto(userId, file));
     }
 }

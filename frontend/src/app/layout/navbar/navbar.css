@@ -1,0 +1,68 @@
+.navbar {
+  height: 64px;
+  padding: 0 28px;
+  border-bottom: 1px solid #eeeeee;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  background: white;
+}
+
+.search-bar {
+  height: 42px;
+  min-width: 420px;
+  border: 1px solid #ddd;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0 16px;
+  height: 100%;
+  font-size: 14px;
+}
+
+.search-bar .divider {
+  width: 1px;
+  height: 26px;
+  background: #ddd;
+}
+
+.search-bar button {
+  width: 50px;
+  height: 42px;
+  border: none;
+  border-radius: 20%;
+  background: #1e1e1e;
+  color: white;
+  cursor: pointer;
+}
+
+.links {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.links a,
+.logout-btn {
+  font-size: 14px;
+  color: #1e1e1e;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.links a:hover,
+.logout-btn:hover {
+  color: #000;
+  font-weight: 600;
+}

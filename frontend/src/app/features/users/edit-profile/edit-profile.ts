@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
-import { UserUpdateRequest } from '../../../core/models/user.model';
+import {UserResponse, UserUpdateRequest} from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-edit-profile',
@@ -15,12 +15,16 @@ import { UserUpdateRequest } from '../../../core/models/user.model';
 })
 export class EditProfile implements OnInit {
   userId: number | null = null;
+  selectedFile: File | null = null;
 
   updateData = signal<UserUpdateRequest> ({
+    lastName: '',
+    bio: '',
     email: '',
     address: '',
     profilePhoto: ''
   });
+
 
   errorMessage = '';
   successMessage = '';
@@ -41,6 +45,8 @@ export class EditProfile implements OnInit {
     this.userService.getUserById(loggedUser.id).subscribe({
       next: (user) => {
         this.updateData.set({
+          lastName: loggedUser.lastName,
+          bio: loggedUser.bio ?? '',
           email: user.email,
           address: user.address || '',
           profilePhoto: user.profilePhoto || ''
@@ -56,16 +62,67 @@ export class EditProfile implements OnInit {
     if (!this.userId) {
       return;
     }
-
     this.userService.updateUser(this.userId, this.updateData()).subscribe({
       next: (updatedUser) => {
-        this.authService.saveLoggedUser(updatedUser);
-        this.successMessage = 'Profile updated successfully.';
-        this.router.navigate(['/profile']);
+        if (this.selectedFile) {
+          this.uploadPhotoAndFinish();
+        } else {
+          this.finishUpdate(updatedUser);
+        }
       },
       error: () => {
         this.errorMessage = 'Could not update profile.';
       }
     });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    this.selectedFile = input.files[0];
+  }
+
+  uploadProfilePhoto(): void {
+    if (!this.selectedFile || !this.userId) {
+      this.errorMessage = 'Please select a file first.';
+      return;
+    }
+    this.userService.uploadProfilePhoto(this.userId, this.selectedFile).subscribe({
+      next: (updatedUser) => {
+        this.authService.saveLoggedUser(updatedUser);
+        this.updateData().profilePhoto = updatedUser.profilePhoto ?? '';
+        this.successMessage = 'Profile photo uploaded successfully.';
+        this.selectedFile = null;
+      },
+      error: (err) => {
+        console.log('UPLOAD PROFILE PHOTO ERROR:', err);
+        this.errorMessage = 'Could not upload profile photo.';
+      }
+    });
+  }
+
+  private uploadPhotoAndFinish(): void {
+    if (!this.selectedFile || !this.userId) {
+      return;
+    }
+    this.userService.uploadProfilePhoto(this.userId, this.selectedFile).subscribe({
+      next: (updatedUser) => {
+        this.finishUpdate(updatedUser);
+      },
+      error: (err) => {
+        console.log('UPLOAD PROFILE PHOTO ERROR:', err);
+        this.errorMessage = 'Profile was updated, but photo could not be uploaded.';
+      }
+    });
+  }
+  private finishUpdate(updatedUser: UserResponse): void {
+    this.authService.saveLoggedUser(updatedUser);
+    this.successMessage = 'Profile updated successfully.';
+    this.selectedFile = null;
+    this.router.navigate(['/profile']);
   }
 }
