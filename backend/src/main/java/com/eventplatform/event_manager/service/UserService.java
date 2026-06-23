@@ -9,6 +9,7 @@ import com.eventplatform.event_manager.dto.UserUpdateRequest;
 import com.eventplatform.event_manager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public User getUserEntityById(Long id) {
         return userRepository.findById(id)
@@ -53,7 +55,7 @@ public class UserService {
         user.setLastName(registerRequest.getLastName());
         user.setBio(registerRequest.getBio());
         user.setEmail(registerRequest.getEmail());
-        user.setPasswordHash(registerRequest.getPassword());
+        user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
         user.setAddress(registerRequest.getAddress());
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
@@ -62,8 +64,8 @@ public class UserService {
     public UserResponse login(UserLoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Грешен имейл!"));
-        if (!user.getPasswordHash().equals(loginRequest.getPassword())) {
-            throw new RuntimeException("Грешна парола!");
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Invalid credentials");
         }
         return userMapper.toResponse(user);
     }
