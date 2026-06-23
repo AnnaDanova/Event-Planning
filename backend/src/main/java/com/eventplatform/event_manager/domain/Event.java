@@ -1,5 +1,6 @@
 package com.eventplatform.event_manager.domain;
 
+import com.eventplatform.event_manager.domain.enums.EventCategory;
 import com.eventplatform.event_manager.domain.enums.EventStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +25,10 @@ public class Event {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String category;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EventCategory category;
+
     private Integer capacity;
     private String venue;
 

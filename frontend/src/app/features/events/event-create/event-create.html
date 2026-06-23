@@ -1,0 +1,53 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Създай събитие</h2>
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form (ngSubmit)="createEvent()">
+    <div class="mb-3">
+      <label class="form-label">Заглавие</label>
+      <input class="form-control" [(ngModel)]="event.title" name="title" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Описание</label>
+      <textarea class="form-control" [(ngModel)]="event.description" name="description"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Локация</label>
+      <input class="form-control" [(ngModel)]="event.venue" name="venue">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Категория</label>
+
+      <select class="form-select" [(ngModel)]="event.category" name="category">
+        <option value="CONFERENCE">Conference</option>
+        <option value="CONCERT">Concert</option>
+        <option value="WORKSHOP">Workshop</option>
+        <option value="FESTIVAL">Festival</option>
+        <option value="SPORTS">Sports</option>
+        <option value="SEMINAR">Seminar</option>
+        <option value="OTHERS">Others</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Капацитет</label>
+      <input type="number" class="form-control" [(ngModel)]="event.capacity" name="capacity">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Дата и час</label>
+      <input type="datetime-local" class="form-control" [(ngModel)]="event.dateTime" name="dateTime" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Създай</button>
+    <a routerLink="/events" class="btn btn-secondary ms-2">Назад</a>
+  </form>
+</div>

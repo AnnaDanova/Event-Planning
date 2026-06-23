@@ -1,5 +1,6 @@
 package com.eventplatform.event_manager.dto;
 
+import com.eventplatform.event_manager.domain.enums.EventCategory;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -28,8 +29,8 @@ public class EventCreateRequest {
     @NotBlank(message = "Мястото на провеждане (venue) е задължително!")
     private String venue;
 
-    @NotBlank(message = "Категорията е задължителна!")
-    private String category; // Напр. CONFERENCE, CONCERT, WORKSHOP
+    @NotNull(message = "Категорията е задължителна!")
+    private EventCategory category;
 
     @NotNull(message = "Датата и часът са задължителни!")
     @Future(message = "Събитието трябва да бъде в бъдещето!")

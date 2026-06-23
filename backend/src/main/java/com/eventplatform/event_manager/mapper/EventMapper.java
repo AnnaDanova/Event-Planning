@@ -24,13 +24,13 @@ public class EventMapper {
         response.setTitle(event.getTitle());
         response.setDateTime(event.getDateTime());
         response.setVenue(event.getVenue());
-        response.setCategory(event.getCategory());
+        response.setCategory(String.valueOf(event.getCategory()));
         response.setStatus(event.getStatus().toString());
         if (event.getTicketCategories() != null) {
             BigDecimal lowestPrice = event.getTicketCategories().stream()
                     .map(TicketCategory::getPrice)
                     .min(BigDecimal::compareTo)
-                    .orElse(null);
+                    .orElse(BigDecimal.ZERO); // TODO: change to null
             response.setLowestPrice(lowestPrice);
         }
         return response;
@@ -45,7 +45,7 @@ public class EventMapper {
         response.setTitle(event.getTitle());
         response.setDescription(event.getDescription());
         response.setVenue(event.getVenue());
-        response.setCategory(event.getCategory());
+        response.setCategory(String.valueOf(event.getCategory()));
         response.setDateTime(event.getDateTime());
         response.setCapacity(event.getCapacity());
         response.setStatus(event.getStatus());
