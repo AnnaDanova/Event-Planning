@@ -2,29 +2,43 @@ package com.eventplatform.event_manager.service;
 
 import com.eventplatform.event_manager.domain.Event;
 import com.eventplatform.event_manager.domain.Session;
+import com.eventplatform.event_manager.domain.SessionMaterial;
 import com.eventplatform.event_manager.domain.User;
 import com.eventplatform.event_manager.domain.enums.SessionStatus;
-import com.eventplatform.event_manager.dto.SessionCreateRequest;
-import com.eventplatform.event_manager.dto.SessionResponse;
-import com.eventplatform.event_manager.dto.SpeakerResponse;
-import com.eventplatform.event_manager.dto.UserResponse;
+import com.eventplatform.event_manager.dto.*;
 import com.eventplatform.event_manager.mapper.SessionMapper;
+import com.eventplatform.event_manager.mapper.SessionMaterialMapper;
 import com.eventplatform.event_manager.mapper.UserMapper;
+import com.eventplatform.event_manager.repository.SessionMaterialRepository;
 import com.eventplatform.event_manager.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @RequiredArgsConstructor
 @Service
 public class SessionService {
 
     private final SessionRepository sessionRepository;
-    private final EventService eventService;
-    private final UserService userService;
     private final SessionMapper sessionMapper;
+
+    private final EventService eventService;
+
+    private final UserService userService;
     private final UserMapper userMapper;
+
+    private final SessionMaterialRepository sessionMaterialRepository;
+    private final SessionMaterialMapper sessionMaterialMapper;
 
     public Session getSessionEntityById(Long id) {
         return sessionRepository.findById(id)
@@ -109,5 +123,56 @@ public class SessionService {
         if (!end.isAfter(start)) {
             throw new IllegalArgumentException("Крайният час на сесията трябва да бъде след началния час!");
         }
+    }
+
+    @Transactional
+    public SessionMaterialResponse uploadSessionMaterial(Long sessionId, MultipartFile file) {
+        Session session = getSessionEntityById(sessionId);
+        String originalFileName = file.getOriginalFilename();
+        if (originalFileName == null || originalFileName.isBlank()) {
+            throw new IllegalArgumentException("Невалидно име на файл.");
+        }
+        String lowerFileName = originalFileName.toLowerCase();
+        if (!(lowerFileName.endsWith(".pdf") || lowerFileName.endsWith(".ppt") || lowerFileName.endsWith(".pptx") || lowerFileName.endsWith(".docx"))) {
+            throw new IllegalArgumentException("Позволени са само PDF, PPT, PPTX и DOCX файлове.");
+        }
+        try {
+            String storedFileName = UUID.randomUUID() + "_" + originalFileName;
+            Path uploadPath = Paths.get("uploads/session-materials").toAbsolutePath();
+            Files.createDirectories(uploadPath);
+            Path filePath = uploadPath.resolve(storedFileName);
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            SessionMaterial material = new SessionMaterial();
+            material.setFileName(originalFileName);
+            material.setFileUrl("/uploads/session-materials/" + storedFileName);
+            material.setFileType(lowerFileName.substring(lowerFileName.lastIndexOf(".") + 1));
+            material.setSession(session);
+            SessionMaterial savedMaterial = sessionMaterialRepository.save(material);
+            return sessionMaterialMapper.toResponse(savedMaterial);
+        } catch (IOException e) {
+            throw new RuntimeException("Файлът не можа да бъде качен.", e);
+        }
+    }
+
+    public List<SessionMaterialResponse> getSessionMaterials(Long sessionId) {
+        Session session = getSessionEntityById(sessionId);
+        return session.getMaterials()
+                .stream()
+                .map(sessionMaterialMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional
+    public void deleteMaterial(Long sessionId, Long materialId) {
+        SessionMaterial material = sessionMaterialRepository.findByIdAndSessionId(materialId, sessionId)
+                        .orElseThrow(() -> new RuntimeException("Material not found."));
+        try {
+            String relativePath = material.getFileUrl();
+            Path filePath = Paths.get(relativePath.replaceFirst("/", ""));
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete file.", e);
+        }
+        sessionMaterialRepository.delete(material);
     }
 }

@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { SessionService } from '../../../core/services/session.service';
-import { SessionCreateRequest } from '../../../core/models/session.model';
+import { SessionCreateRequest, SessionMaterialResponse } from '../../../core/models/session.model';
 import { UserService } from '../../../core/services/user.service';
 import { UserResponse } from '../../../core/models/user.model';
 import { SpeakerResponse } from '../../../core/models/speaker.model';
@@ -21,6 +21,8 @@ export class SessionEdit implements OnInit {
   speakerSearch = '';
   speakerResults = signal<UserResponse[]>([]);
   currentSpeakers = signal<SpeakerResponse[]>([]);
+  selectedMaterial: File | null = null;
+  materials = signal<SessionMaterialResponse[]>([]);
 
   sessionData = signal<SessionCreateRequest>({
     title: '',
@@ -43,6 +45,7 @@ export class SessionEdit implements OnInit {
 
     this.loadSession();
     this.loadSpeakers();
+    this.loadMaterials();
   }
 
   loadSession(): void {
@@ -70,6 +73,16 @@ export class SessionEdit implements OnInit {
       error: (err) => {
         console.log('LOAD SPEAKERS ERROR:', err);
         this.errorMessage = 'Could not load speakers.';
+      }
+    });
+  }
+  loadMaterials(): void {
+    this.sessionService.getSessionMaterials(this.eventId, this.sessionId).subscribe({
+      next: (materials) => {
+        this.materials.set(materials);
+      },
+      error: (err) => {
+        console.log('LOAD MATERIALS ERROR:', err);
       }
     });
   }
@@ -161,5 +174,45 @@ export class SessionEdit implements OnInit {
       return '';
     }
     return dateValue.slice(0, 16);
+  }
+
+  onMaterialSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    this.selectedMaterial = input.files[0];
+  }
+
+  uploadMaterial(): void {
+    if (!this.selectedMaterial) {
+      this.errorMessage = 'Моля, изберете файл.';
+      return;
+    }
+    this.sessionService.uploadSessionMaterial(this.eventId, this.sessionId, this.selectedMaterial).subscribe({
+      next: (material) => {
+        this.materials.update(materials => [...materials, material]);
+        this.selectedMaterial = null;
+        this.errorMessage = '';
+      },
+      error: (err) => {
+        console.log('UPLOAD MATERIAL ERROR:', err);
+        this.errorMessage = 'Файлът не можа да бъде качен.';
+      }
+    });
+  }
+
+  deleteMaterial(materialId: number): void {
+    this.sessionService.deleteSessionMaterial(this.eventId, this.sessionId, materialId).subscribe({
+      next: () => {
+        this.materials.update(materials =>
+          materials.filter(material => material.id !== materialId)
+        );
+      },
+      error: (err) => {
+        console.log('DELETE MATERIAL ERROR:', err);
+        this.errorMessage = 'Материалът не можа да бъде изтрит.';
+      }
+    });
   }
 }

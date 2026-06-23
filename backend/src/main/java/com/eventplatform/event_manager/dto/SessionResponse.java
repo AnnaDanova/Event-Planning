@@ -17,5 +17,6 @@ public class SessionResponse {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private SessionStatus status;
+    private List<SessionMaterialResponse> materials;
     private List<UserResponse> speakers;
 }

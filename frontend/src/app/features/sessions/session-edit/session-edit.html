@@ -21,7 +21,21 @@
     <label>Краен час: </label>
     <input type="datetime-local" name="endTime" [ngModel]="sessionData().endTime" (ngModelChange)="updateField('endTime', $event)" required>
   </div>
-
+  <div>
+    <h3>Материали към сесията</h3>
+    <input type="file" accept=".pdf,.ppt,.pptx,.docx" (change)="onMaterialSelected($event)"/>
+    <button type="button" (click)="uploadMaterial()">Качи материал</button>
+    @if (materials().length === 0) {
+      <p>Няма качени материали.</p>
+    } @else {
+      @for (material of materials(); track material.id) {
+        <div>
+          <a [href]="'http://localhost:8080' + material.fileUrl" target="_blank">{{ material.fileName }}</a>
+          <button type="button" (click)="deleteMaterial(material.id)">Изтрий</button>
+        </div>
+      }
+    }
+  </div>
   <label for="speakerSearch">Добави лектор</label>
   <input id="speakerSearch" name="speakerSearch" type="text" [(ngModel)]="speakerSearch" (input)="searchSpeakers()" placeholder="Търси по име или имейл"/>
   @if (speakerResults().length > 0) {

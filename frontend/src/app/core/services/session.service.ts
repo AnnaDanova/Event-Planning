@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { SessionCreateRequest, SessionResponse } from '../models/session.model';
+import { SessionCreateRequest, SessionResponse, SessionMaterialResponse } from '../models/session.model';
 import { SpeakerResponse } from '../models/speaker.model';
 
 @Injectable({providedIn: 'root'})
@@ -43,4 +43,19 @@ export class SessionService {
   getSpeakersBySessionId(eventId: number, sessionId: number): Observable<SpeakerResponse[]> {
     return this.http.get<SpeakerResponse[]>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers`);
   }
+
+  uploadSessionMaterial(eventId: number, sessionId: number, file: File): Observable<SessionMaterialResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<SessionMaterialResponse>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/materials`, formData);
+  }
+
+  getSessionMaterials(eventId: number, sessionId: number): Observable<SessionMaterialResponse[]> {
+    return this.http.get<SessionMaterialResponse[]>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/materials`);
+  }
+
+  deleteSessionMaterial(eventId: number, sessionId: number, materialId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/materials/${materialId}`);
+  }
+
 }
