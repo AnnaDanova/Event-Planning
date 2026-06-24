@@ -1,0 +1,38 @@
+<div class="container mt-5">
+
+  @if (isLoading()) {
+    <p>Зареждане...</p>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (event(); as eventDetails) {
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <span class="badge bg-secondary mb-3">
+          {{ eventDetails.category }}
+        </span>
+
+        <h2>{{ eventDetails.title }}</h2>
+
+        <p><strong>Описание:</strong> {{ eventDetails.description }}</p>
+        <p><strong>Локация:</strong> {{ eventDetails.venue }}</p>
+        <p><strong>Начало:</strong> {{ eventDetails.startTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+        <p><strong>Край:</strong> {{ eventDetails.endTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+        <p><strong>Капацитет:</strong> {{ eventDetails.capacity }}</p>
+        <p><strong>Статус:</strong> {{ eventDetails.status }}</p>
+
+        <a routerLink="/events" class="btn btn-outline-secondary">
+          Назад
+        </a>
+
+      </div>
+    </div>
+  }
+
+</div>

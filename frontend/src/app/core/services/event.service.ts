@@ -8,10 +8,8 @@ import {
 } from '../models/event.model';
 
 @Injectable({
-  providedIn: 'root' // Прави сервиза сингълтон и достъпен навсякъде
-})
+  providedIn: 'root' })
 export class EventService {
-  // Базовият URL към твоя Spring Boot EventController
   private apiUrl = 'http://localhost:8080/api/events';
 
   constructor(private http: HttpClient) {}
