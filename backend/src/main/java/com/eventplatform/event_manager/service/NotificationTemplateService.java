@@ -2,6 +2,7 @@ package com.eventplatform.event_manager.service;
 
 import com.eventplatform.event_manager.domain.Event;
 import com.eventplatform.event_manager.domain.NotificationTemplate;
+import com.eventplatform.event_manager.domain.Session;
 import com.eventplatform.event_manager.domain.enums.NotificationType;
 import com.eventplatform.event_manager.dto.NotificationTemplateRequest; // Твоят Request клас
 import com.eventplatform.event_manager.dto.NotificationTemplateResponse;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,4 +72,24 @@ public class NotificationTemplateService {
         return templateRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Шаблонът за нотификация не е намерен!"));
     }
+
+    @Transactional
+    public NotificationTemplate createInstantTemplate(Long eventId, Long sessionId, String message, NotificationType type) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Събитието не беше намерено!"));
+        Session session = null;
+        if (sessionId != null) {
+            session = sessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new RuntimeException("Сесията не беше намерена!"));
+        }
+        NotificationTemplate template = new NotificationTemplate();
+        template.setEvent(event);
+        template.setSession(session);
+        template.setMessage(message);
+        template.setScheduledAt(LocalDateTime.now());
+        template.setType(type);
+        template.setSent(true);
+        return templateRepository.save(template);
+    }
+
 }

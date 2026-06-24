@@ -40,6 +40,9 @@ public class SessionService {
     private final SessionMaterialRepository sessionMaterialRepository;
     private final SessionMaterialMapper sessionMaterialMapper;
 
+    private final NotificationService notificationService;
+
+
     public Session getSessionEntityById(Long id) {
         return sessionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Сесията с ID " + id + " не беше намерена!"));
@@ -92,11 +95,13 @@ public class SessionService {
                 .toList();
     }
 
+    @Transactional
     public void addSpeakerToSession(Long sessionId, Long speakerId) {
         Session session = getSessionEntityById(sessionId);
         User speaker = userService.getUserEntityById(speakerId);
         session.getSpeakers().add(speaker);
-        sessionRepository.save(session);
+        Session savedSession = sessionRepository.save(session);
+        notificationService.sendSpeakerAssignedNotification(speaker.getId(), savedSession.getEvent().getId(), savedSession.getId());
     }
 
     public void removeSpeakerFromSession(Long sessionId, Long speakerId) {
@@ -175,4 +180,6 @@ public class SessionService {
         }
         sessionMaterialRepository.delete(material);
     }
+
+
 }

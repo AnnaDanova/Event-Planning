@@ -74,4 +74,28 @@ public class NotificationService {
         notification.setStatus(NotificationStatus.SENT);
         return notificationMapper.toResponse(notificationRepository.save(notification));
     }
+
+    @Transactional
+    public NotificationResponse sendTicketConfirmedNotification(Long userId, Long eventId) {
+        User user = userService.getUserEntityById(userId);
+        NotificationTemplate template = templateService.createInstantTemplate(eventId, null, "Успешно се записахте за събитието!", com.eventplatform.event_manager.domain.enums.NotificationType.TICKET_CONFIRMED);
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setTemplate(template);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setStatus(NotificationStatus.SENT);
+        return notificationMapper.toResponse(notificationRepository.save(notification));
+    }
+
+    @Transactional
+    public NotificationResponse sendSpeakerAssignedNotification(Long speakerId, Long eventId, Long sessionId) {
+        User speaker = userService.getUserEntityById(speakerId);
+        NotificationTemplate template = templateService.createInstantTemplate(eventId, sessionId, "Добавени сте към събитие.", com.eventplatform.event_manager.domain.enums.NotificationType.SPEAKER_BRIEFING);
+        Notification notification = new Notification();
+        notification.setUser(speaker);
+        notification.setTemplate(template);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setStatus(NotificationStatus.SENT);
+        return notificationMapper.toResponse(notificationRepository.save(notification));
+    }
 }

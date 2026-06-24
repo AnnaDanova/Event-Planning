@@ -30,6 +30,7 @@ public class TicketService {
     private final TicketCategoryService ticketCategoryService;
     private final TicketMapper ticketMapper;
     private final UserMapper userMapper;
+    private final NotificationService notificationService;
 
     @Transactional
     public TicketResponse purchaseTicket(Long userId, Long eventId, Long categoryId) {
@@ -49,7 +50,9 @@ public class TicketService {
         ticket.setTicketCategory(category);
         ticket.setPurchaseDate(LocalDateTime.now());
         ticket.setStatus(TicketStatus.valueOf("CONFIRMED"));
-        return ticketMapper.toResponse(ticketRepository.save(ticket));
+        Ticket savedTicket = ticketRepository.save(ticket);
+        notificationService.sendTicketConfirmedNotification(user.getId(), event.getId());
+        return ticketMapper.toResponse(savedTicket);
     }
 
     public List<UserResponse> getAttendeesByEventId(Long eventId) {
