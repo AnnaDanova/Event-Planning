@@ -25,20 +25,14 @@ export class Login {
   ) {}
 
   login(): void {
-    this.errorMessage ='';
     this.authService.login(this.loginData).subscribe({
       next: (user) => {
         this.authService.saveLoggedUser(user);
-        this.router.navigate(['/']);
+        this.router.navigate(['/profile']);
       },
-      error: (err) => {
-          console.log('LOGIN ERROR:', err);
-          if (err.error?.message) {
-            this.errorMessage = err.error.message;
-          } else {
-            this.errorMessage = 'Невалиден имейл или парола.';
-          }
-        }
+      error: () => {
+        this.errorMessage = 'Invalid email or password!';
+      }
     });
   }
 }

@@ -15,14 +15,6 @@ public class UserRegisterRequest {
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
 
-    @NotBlank(message = "First name is required")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    private String lastName;
-
-    private String bio;
-
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be a valid email address")
     private String email;

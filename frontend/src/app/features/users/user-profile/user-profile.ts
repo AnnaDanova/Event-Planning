@@ -15,6 +15,7 @@ import { UserResponse } from '../../../core/models/user.model';
 export class UserProfile implements OnInit {
 
   user = signal<UserResponse | null>(null);
+
   errorMessage = '';
 
   constructor(
@@ -24,41 +25,59 @@ export class UserProfile implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
     const loggedUser = this.authService.getLoggedUser();
+
     console.log('loggedUser:', loggedUser);
+
     if (!loggedUser) {
       this.router.navigate(['/login']);
       return;
     }
+
     this.userService.getUserById(loggedUser.id).subscribe({
       next: (response) => {
+
         console.log('PROFILE RESPONSE:', response);
+
         this.user.set(response);
+
       },
       error: (err) => {
+
         console.log('PROFILE ERROR:', err);
+
         this.errorMessage = 'Could not load user profile.';
       }
     });
   }
 
   logout(): void {
+
     this.authService.logout();
+
     this.router.navigate(['/login']);
   }
 
   deleteProfile(): void {
+
     const currentUser = this.user();
+
     if (!currentUser) {
       return;
     }
+
     this.userService.deleteUser(currentUser.id).subscribe({
       next: () => {
+
         this.authService.logout();
+
         this.router.navigate(['/register']);
       },
       error: (err) => {
+
         console.log('DELETE ERROR:', err);
+
         this.errorMessage = 'Could not delete profile.';
       }
     });

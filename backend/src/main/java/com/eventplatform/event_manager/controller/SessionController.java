@@ -1,11 +1,12 @@
 package com.eventplatform.event_manager.controller;
-import com.eventplatform.event_manager.dto.*;
+import com.eventplatform.event_manager.dto.SessionCreateRequest;
+import com.eventplatform.event_manager.dto.SessionResponse;
+import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.service.SessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -53,29 +54,13 @@ public class SessionController {
     }
 
     @GetMapping("/{sessionId}/speakers")
-    public ResponseEntity<List<SpeakerResponse>> getSessionSpeakers(@PathVariable Long sessionId) {
+    public ResponseEntity<List<UserResponse>> getSessionSpeakers(@PathVariable Long sessionId) {
         return ResponseEntity.ok(sessionService.getSpeakersBySessionId(sessionId));
     }
 
     @DeleteMapping("/{sessionId}/speakers/{speakerId}")
     public ResponseEntity<Void> removeSpeakerFromSession(@PathVariable Long sessionId, @PathVariable Long speakerId) {
         sessionService.removeSpeakerFromSession(sessionId, speakerId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/{sessionId}/materials")
-    public ResponseEntity<SessionMaterialResponse> uploadSessionMaterial(@PathVariable Long sessionId, @RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok(sessionService.uploadSessionMaterial(sessionId, file));
-    }
-
-    @GetMapping("/{sessionId}/materials")
-    public ResponseEntity<List<SessionMaterialResponse>> getSessionMaterials(@PathVariable Long sessionId) {
-        return ResponseEntity.ok(sessionService.getSessionMaterials(sessionId));
-    }
-
-    @DeleteMapping("/{sessionId}/materials/{materialId}")
-    public ResponseEntity<Void> deleteMaterial(@PathVariable Long sessionId, @PathVariable Long materialId) {
-        sessionService.deleteMaterial(sessionId, materialId);
         return ResponseEntity.noContent().build();
     }
 }
