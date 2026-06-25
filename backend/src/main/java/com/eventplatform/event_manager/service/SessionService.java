@@ -44,8 +44,12 @@ public class SessionService {
 
 
     public Session getSessionEntityById(Long id) {
-        return sessionRepository.findById(id)
+        Session session = sessionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Сесията с ID " + id + " не беше намерена!"));
+        if (session.getStatus() == SessionStatus.ARCHIVED) {
+            throw new RuntimeException("Сесията е архивирана!");
+        }
+        return session;
     }
 
     public SessionResponse getSessionById(Long id) {
@@ -79,18 +83,18 @@ public class SessionService {
         return sessionMapper.toResponse(sessionRepository.save(session));
     }
 
+    @Transactional
     public void deleteSession(Long id) {
-        sessionRepository.delete(getSessionEntityById(id));
-    }
-
-    public List<Session> getAllSessions() {
-        return sessionRepository.findAll();
+        Session session = getSessionEntityById(id);
+        session.setStatus(SessionStatus.ARCHIVED);
+        sessionRepository.save(session);
     }
 
     public List<SessionResponse> getSessionsByEventId(Long eventId) {
         eventService.getEventEntityById(eventId);
         return sessionRepository.findByEventIdOrderByStartTimeAsc(eventId)
                 .stream()
+                .filter(session -> session.getStatus() != SessionStatus.ARCHIVED)
                 .map(sessionMapper::toResponse)
                 .toList();
     }
@@ -120,11 +124,19 @@ public class SessionService {
                 .toList();
     }
 
+    public List<SessionResponse> getSessionsBySpeaker(Long speakerId) {
+        userService.getUserEntityById(speakerId);
+        return sessionRepository.findBySpeakersId(speakerId)
+                .stream()
+                .filter(session -> session.getStatus() != SessionStatus.ARCHIVED)
+                .map(sessionMapper::toResponse)
+                .toList();
+    }
+
     private void validateTime(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null) {
             throw new IllegalArgumentException("Началният и крайният час на сесията са задължителни!");
         }
-
         if (!end.isAfter(start)) {
             throw new IllegalArgumentException("Крайният час на сесията трябва да бъде след началния час!");
         }
@@ -180,6 +192,4 @@ public class SessionService {
         }
         sessionMaterialRepository.delete(material);
     }
-
-
 }

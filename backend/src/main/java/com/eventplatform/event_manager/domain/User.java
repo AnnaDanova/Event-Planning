@@ -39,6 +39,9 @@ public class User {
     @Column(name = "profile_photo")
     private String profilePhoto;
 
+    @Column(nullable = false)
+    private Boolean active = true;
+
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Event> organizedEvents;
 

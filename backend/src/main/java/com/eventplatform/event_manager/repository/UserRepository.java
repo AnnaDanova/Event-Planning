@@ -15,13 +15,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     @Query("""
-            SELECT u
-            FROM User u
-            WHERE
-            LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%'))
-            OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%'))
-            OR LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE LOWER(CONCAT('%', :query, '%'))
-            OR LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%'))
-            """)
+    SELECT u FROM User u
+    WHERE u.active = true
+    AND (
+        LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%'))
+        OR LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%'))
+    )
+    """)
     List<User> searchUsers(@Param("query") String query);
 }

@@ -30,8 +30,12 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User getUserEntityById(Long id) {
-        return userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Потребителят не е намерен!"));
+        if (!user.getActive()) {
+            throw new RuntimeException("Потребителят е деактивиран!");
+        }
+        return user;
     }
 
     public UserResponse getUserById(Long id) {
@@ -57,6 +61,7 @@ public class UserService {
         user.setEmail(registerRequest.getEmail());
         user.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
         user.setAddress(registerRequest.getAddress());
+        user.setActive(true);
         User savedUser = userRepository.save(user);
         return userMapper.toResponse(savedUser);
     }
@@ -64,8 +69,11 @@ public class UserService {
     public UserResponse login(UserLoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("Грешен имейл!"));
+        if (!user.getActive()) {
+            throw new RuntimeException("Профилът е деактивиран!");
+        }
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("Invalid credentials");
+            throw new IllegalArgumentException("Грешна парола!");
         }
         return userMapper.toResponse(user);
     }
@@ -92,10 +100,9 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException("Потребителят не съществува!");
-        }
-        userRepository.deleteById(id);
+        User user = getUserEntityById(id);
+        user.setActive(false);
+        userRepository.save(user);
     }
 
     public List<UserResponse> searchUsers(String query) {

@@ -37,6 +37,8 @@ public class SessionMapper {
 
         return new SessionResponse(session.getId(),
                 session.getTitle(),
+                session.getEvent().getId(),
+                session.getEvent().getTitle(),
                 session.getDescription(),
                 session.getStartTime(),
                 session.getEndTime(),

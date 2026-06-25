@@ -58,4 +58,8 @@ export class SessionService {
     return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/materials/${materialId}`);
   }
 
+  getSpeakerSessions(userId: number): Observable<SessionResponse[]> {
+    return this.http.get<SessionResponse[]>(`http://localhost:8080/api/users/${userId}/speaker-sessions`);
+  }
+
 }

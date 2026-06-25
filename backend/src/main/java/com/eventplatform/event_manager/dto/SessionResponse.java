@@ -13,6 +13,8 @@ import com.eventplatform.event_manager.dto.UserResponse;
 public class SessionResponse {
     private Long id;
     private String title;
+    private Long eventId;
+    private String eventTitle;
     private String description;
     private LocalDateTime startTime;
     private LocalDateTime endTime;

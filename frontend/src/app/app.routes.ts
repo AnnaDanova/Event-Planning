@@ -14,6 +14,7 @@ import { TemplateList} from './features/notification-templates/template-list/tem
 import { TemplateCreate } from './features/notification-templates/template-create/template-create';
 import { EventListComponent } from './features/events/event-list/event-list.component';
 import { EventCreateComponent } from './features/events/event-create/event-create';
+import { SpeakerSessions } from './features/sessions/speaker-sessions/speaker-sessions';
 
 export const routes: Routes = [
   { path: 'register', component: Register },
@@ -28,6 +29,7 @@ export const routes: Routes = [
   { path: 'notifications', component: NotificationList, canActivate: [authGuard]},
   { path: 'events/:eventId/notification-templates/create', component: TemplateCreate,canActivate: [authGuard]},
   { path: 'events/:eventId/notification-templates', component: TemplateList,canActivate: [authGuard]},
+  { path: 'my-sessions', component: SpeakerSessions},
   { path: 'not-authorized', component: NotAuthorized },
   { path: '', component: Home }
 ];

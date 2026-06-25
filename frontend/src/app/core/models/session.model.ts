@@ -17,6 +17,8 @@ export interface SessionCreateRequest {
 export interface SessionResponse {
   id: number;
   title: string;
+  eventId: number;
+  eventTitle: string;
   description: string;
   startTime: string;
   endTime: string;

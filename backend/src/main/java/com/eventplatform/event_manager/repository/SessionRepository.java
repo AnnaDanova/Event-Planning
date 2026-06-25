@@ -10,4 +10,5 @@ import java.util.List;
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
     List<Session> findByEventIdOrderByStartTimeAsc(Long eventId);
+    List<Session> findBySpeakersId(Long speakerId);
 }

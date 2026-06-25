@@ -1,6 +1,7 @@
 package com.eventplatform.event_manager.controller;
 
 import com.eventplatform.event_manager.dto.*;
+import com.eventplatform.event_manager.service.SessionService;
 import com.eventplatform.event_manager.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final SessionService sessionService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,SessionService sessionService) {
         this.userService = userService;
+        this.sessionService = sessionService;
     }
 
     @PostMapping("/register")
@@ -56,5 +59,10 @@ public class UserController {
             @PathVariable Long userId,
             @RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok(userService.uploadProfilePhoto(userId, file));
+    }
+
+    @GetMapping("/{userId}/speaker-sessions")
+    public ResponseEntity<List<SessionResponse>> getSpeakerSessions(@PathVariable Long userId) {
+        return ResponseEntity.ok(sessionService.getSessionsBySpeaker(userId));
     }
 }
