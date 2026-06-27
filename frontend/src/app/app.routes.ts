@@ -11,7 +11,7 @@ import { EventListComponent } from './features/events/event-list/event-list.comp
 import { EventCreateComponent } from './features/events/event-create/event-create';
 import { EventDetailsComponent } from './features/events/event-details/event-details';
 import { TicketCategoryCreateComponent } from './features/ticket-categories/ticket-category-create/ticket-category-create';
-
+import { MyEventsComponent } from './features/events/my-events/my-events';
 
 export const routes: Routes = [
   { path: 'register', component: Register },
@@ -26,4 +26,5 @@ export const routes: Routes = [
   { path: 'events/create', component: EventCreateComponent },
   { path: 'events/:eventId', component: EventDetailsComponent },
   { path: 'events/:eventId/ticket-categories/create', component: TicketCategoryCreateComponent },
+  { path: 'my-events', component: MyEventsComponent },
 ];

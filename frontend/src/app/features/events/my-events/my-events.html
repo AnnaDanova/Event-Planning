@@ -1,0 +1,107 @@
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Моите събития</h2>
+
+    <a routerLink="/events/create" class="btn btn-primary">
+      + Създай събитие
+    </a>
+  </div>
+
+  @if (isLoading()) {
+
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Зареждане...</p>
+    </div>
+
+  }
+
+  @if (errorMessage()) {
+
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+  @if (!isLoading() && !errorMessage()) {
+
+    @if (events().length === 0) {
+
+      <div class="alert alert-info">
+        Все още нямаш създадени събития.
+      </div>
+
+    } @else {
+
+      <div class="row">
+
+        @for (event of events(); track event.id) {
+
+          <div class="col-md-6 col-lg-4 mb-4">
+
+            <div class="card h-100 shadow-sm">
+
+              <div class="card-body">
+
+                <h5 class="card-title">
+                  {{ event.title }}
+                </h5>
+
+                <p>
+                  <strong>Категория:</strong>
+                  {{ event.category }}
+                </p>
+
+                <p>
+                  <strong>Локация:</strong>
+                  {{ event.venue }}
+                </p>
+
+                <p>
+                  <strong>Начало:</strong><br>
+                  {{ event.startTime | date:'dd.MM.yyyy HH:mm' }}
+                </p>
+
+                <p>
+                  <strong>Край:</strong><br>
+                  {{ event.endTime | date:'dd.MM.yyyy HH:mm' }}
+                </p>
+
+                <p>
+                  <strong>Цена от:</strong>
+                  {{ event.lowestPrice }} лв.
+                </p>
+
+              </div>
+
+              <div class="card-footer bg-white">
+
+                <a
+                  [routerLink]="['/events', event.id]"
+                  class="btn btn-outline-primary btn-sm">
+                  Детайли
+                </a>
+
+                <a
+                  [routerLink]="['/events', event.id, 'edit']"
+                  class="btn btn-outline-warning btn-sm ms-2">
+                  Редактирай
+                </a>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    }
+
+  }
+
+</div>
