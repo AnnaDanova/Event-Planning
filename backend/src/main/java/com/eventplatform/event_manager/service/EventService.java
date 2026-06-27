@@ -108,4 +108,11 @@ public class EventService {
             throw new IllegalArgumentException("Датата и часът на приключване на събитието са невалидни!");
         }
     }
+
+    public List<EventShortResponse> getEventsByOrganizer(Long organizerId) {
+        return eventRepository.findByOrganizerId(organizerId)
+                .stream()
+                .map(eventMapper::toShortResponse)
+                .toList();
+    }
 }
