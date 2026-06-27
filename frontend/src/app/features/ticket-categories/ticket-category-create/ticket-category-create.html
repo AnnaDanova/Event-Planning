@@ -1,0 +1,45 @@
+<div class="container mt-5">
+
+  <h2>Добавяне на категория билети</h2>
+
+  <form (ngSubmit)="createCategory()">
+
+    <div class="mb-3">
+      <label class="form-label">Име</label>
+      <input
+        class="form-control"
+        [(ngModel)]="category.name"
+        name="name">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Брой билети</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="category.quantity"
+        name="quantity">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Цена</label>
+      <input
+        type="number"
+        class="form-control"
+        [(ngModel)]="category.price"
+        name="price">
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+    }
+
+    <button class="btn btn-primary">
+      Добави
+    </button>
+
+  </form>
+
+</div>
