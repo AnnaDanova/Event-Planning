@@ -1,6 +1,7 @@
 package com.eventplatform.event_manager.mapper;
 
 import com.eventplatform.event_manager.domain.Session;
+import com.eventplatform.event_manager.dto.SessionMaterialResponse;
 import com.eventplatform.event_manager.dto.SessionResponse;
 import com.eventplatform.event_manager.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.List;
 public class SessionMapper {
 
     private final UserMapper userMapper;
+    private final SessionMaterialMapper sessionMaterialMapper;
 
     public SessionResponse toResponse(Session session) {
         if (session == null) {
@@ -24,6 +26,15 @@ public class SessionMapper {
                     .map(userMapper::toResponse)
                     .toList();
         }
+        List<SessionMaterialResponse> materials = List.of();
+
+        if (session.getMaterials() != null) {
+            materials = session.getMaterials()
+                    .stream()
+                    .map(sessionMaterialMapper::toResponse)
+                    .toList();
+        }
+
         return new SessionResponse(session.getId(),
                 session.getTitle(),
                 session.getEvent().getId(),
@@ -33,6 +44,7 @@ public class SessionMapper {
                 session.getStartTime(),
                 session.getEndTime(),
                 session.getStatus(),
+                materials,
                 speakers);
     }
 }

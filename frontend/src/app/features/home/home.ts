@@ -1,15 +1,30 @@
 import { Component } from '@angular/core';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink, RouterModule} from '@angular/router';
 import {AuthService} from '../../core/services/auth.service';
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-home',
-    imports: [RouterLink, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
 export class Home {
-  constructor(public authService: AuthService) {}
+  keyword = '';
+  location = '';
 
+  constructor(
+    public authService: AuthService,
+    private router: Router
+  ) {}
+
+  searchEvents(): void {
+    this.router.navigate(['/events'], {
+      queryParams: {
+        keyword: this.keyword || null,
+        location: this.location || null
+      }
+    });
+  }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   EventCreateRequest,
@@ -14,9 +14,20 @@ export class EventService {
 
   constructor(private http: HttpClient) {}
 
-  getAllEvents(): Observable<EventShortResponse[]> {
-    return this.http.get<EventShortResponse[]>(this.apiUrl);
+  getEvents(filters?: { category?: string; location?: string; keyword?: string; }): Observable<EventShortResponse[]> {
+    let params = new HttpParams();
+    if (filters?.category) {
+      params = params.set('category', filters.category);
+    }
+    if (filters?.location) {
+      params = params.set('location', filters.location);
+    }
+    if (filters?.keyword) {
+      params = params.set('keyword', filters.keyword);
+    }
+    return this.http.get<EventShortResponse[]>(this.apiUrl, { params });
   }
+
 
   getEventById(id: number): Observable<EventDetailsResponse> {
     return this.http.get<EventDetailsResponse>(`${this.apiUrl}/${id}`);

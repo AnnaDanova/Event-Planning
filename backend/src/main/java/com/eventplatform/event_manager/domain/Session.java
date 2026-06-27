@@ -36,14 +36,13 @@ public class Session {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private SessionStatus status = SessionStatus.CONFIRMED; // confirmed, cancelled
+    private SessionStatus status = SessionStatus.CONFIRMED;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SessionMaterial> materials;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "session_speakers",
-            joinColumns = @JoinColumn(name = "session_id"),
-            inverseJoinColumns = @JoinColumn(name = "speaker_id")
-    )
+    @JoinTable(name = "session_speakers", joinColumns = @JoinColumn(name = "session_id"), inverseJoinColumns = @JoinColumn(name = "speaker_id"))
     private Set<User> speakers = new HashSet<>();
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

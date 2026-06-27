@@ -1,9 +1,25 @@
-<h2>User Profile</h2>
-<p style="color: red">{{ errorMessage }}</p>
-<p><strong>Username:</strong> {{ user()?.username }}</p>
-<p><strong>Email:</strong> {{ user()?.email }}</p>
-<p><strong>Address:</strong> {{ user()?.address || 'No address' }}</p>
-<a routerLink="/profile/edit">Edit profile</a>
-<br><br>
-<button type="button" (click)="logout()">Logout</button>
-<button type="button" (click)="deleteProfile()">Delete profile</button>
+<section class="page">
+  <div class="list-card">
+    <h2>Моят профил</h2>
+    @if (errorMessage) {
+      <p class="error-message">{{ errorMessage }}</p>
+    }
+    @if (user()?.profilePhoto) {
+      <div class="item-card">
+        <img [src]="'http://localhost:8080' + user()?.profilePhoto" alt="Профилна снимка" width="150">
+      </div>
+    }
+    <div class="item-card">
+      <p><strong>Имена:</strong> {{ user()?.firstName }} {{ user()?.lastName }}</p>
+      <p><strong>Потребителско име:</strong> {{ user()?.username }}</p>
+      <p><strong>Описание / За мен:</strong> {{ user()?.bio }}</p>
+      <p><strong>Имейл:</strong> {{ user()?.email }}</p>
+      <p><strong>Населено място:</strong> {{ user()?.address || 'Няма въведено населено място' }}</p>
+    </div>
+    <div class="actions">
+      <a class="btn" routerLink="/profile/edit">Редактиране на профила</a>
+      <button type="button" (click)="logout()">Изход</button>
+      <button type="button" (click)="deleteProfile()">Изтриване на профила</button>
+    </div>
+  </div>
+</section>

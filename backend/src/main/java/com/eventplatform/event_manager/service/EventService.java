@@ -2,6 +2,7 @@ package com.eventplatform.event_manager.service;
 
 import com.eventplatform.event_manager.domain.Event;
 import com.eventplatform.event_manager.domain.User;
+import com.eventplatform.event_manager.domain.enums.EventCategory;
 import com.eventplatform.event_manager.domain.enums.EventStatus;
 import com.eventplatform.event_manager.dto.*;
 import com.eventplatform.event_manager.mapper.EventMapper;
@@ -114,6 +115,21 @@ public class EventService {
         if (endTime.isBefore(LocalDateTime.now()) || endTime.isBefore(startTime)) {
             throw new IllegalArgumentException("Датата и часът на приключване на събитието са невалидни!");
         }
+    }
+
+    public List<EventShortResponse> searchEvents(EventCategory category, String location, String keyword) {
+        String locationPattern = null;
+        if (location != null && !location.isBlank()) {
+            locationPattern = "%" + location.toLowerCase() + "%";
+        }
+        String keywordPattern = null;
+        if (keyword != null && !keyword.isBlank()) {
+            keywordPattern = "%" + keyword.toLowerCase() + "%";
+        }
+        return eventRepository.searchEvents(category, locationPattern, keywordPattern)
+                .stream()
+                .map(eventMapper::toShortResponse)
+                .toList();
     }
 
     public List<EventShortResponse> getEventsByOrganizer(Long organizerId) {

@@ -8,33 +8,26 @@
 } @else {
     <section class="page">
   <form class="form-card" (ngSubmit)="updateSession()">
-
     <h2>Редактиране на сесия</h2>
-
     @if (errorMessage) {
       <p class="error-message">{{ errorMessage }}</p>
     }
-
     <div class="form-group">
       <label>Тема</label>
       <input type="text" name="title" [ngModel]="sessionData().title" (ngModelChange)="updateField('title', $event)" required>
     </div>
-
     <div class="form-group">
       <label>Описание</label>
       <textarea name="description" [ngModel]="sessionData().description" (ngModelChange)="updateField('description', $event)" required></textarea>
     </div>
-
     <div class="form-group">
       <label>Начален час</label>
       <input type="datetime-local" name="startTime" [ngModel]="sessionData().startTime" (ngModelChange)="updateField('startTime', $event)" required>
     </div>
-
     <div class="form-group">
       <label>Краен час</label>
       <input type="datetime-local" name="endTime" [ngModel]="sessionData().endTime" (ngModelChange)="updateField('endTime', $event)" required>
     </div>
-
     <h3>Материали към сесията</h3>
     @if (isOrganizer() || isSpeaker()){
         <div class="form-group">
@@ -62,7 +55,6 @@
         }
       </div>
     }
-
     <h3>Лектори</h3>
     @if (isOrganizer()){
         <div class="form-group">
