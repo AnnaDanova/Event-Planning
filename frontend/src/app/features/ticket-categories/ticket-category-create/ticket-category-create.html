@@ -1,24 +1,38 @@
 <div class="container mt-5">
+  <h2 class="mb-4">Добави категория билети</h2>
 
-  <h2>Добавяне на категория билети</h2>
+  @if (successMessage) {
+    <div class="alert alert-success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
 
   <form (ngSubmit)="createCategory()">
 
     <div class="mb-3">
-      <label class="form-label">Име</label>
+      <label class="form-label">Име на категория</label>
       <input
         class="form-control"
         [(ngModel)]="category.name"
-        name="name">
+        name="name"
+        required>
     </div>
 
     <div class="mb-3">
-      <label class="form-label">Брой билети</label>
+      <label class="form-label">Количество билети</label>
       <input
         type="number"
         class="form-control"
         [(ngModel)]="category.quantity"
-        name="quantity">
+        name="quantity"
+        required
+        min="1">
     </div>
 
     <div class="mb-3">
@@ -27,19 +41,25 @@
         type="number"
         class="form-control"
         [(ngModel)]="category.price"
-        name="price">
+        name="price"
+        required
+        min="0"
+        step="0.01">
     </div>
 
-    @if (errorMessage) {
-      <div class="alert alert-danger">
-        {{ errorMessage }}
-      </div>
-    }
-
-    <button class="btn btn-primary">
-      Добави
+    <button type="submit" class="btn btn-primary">
+      Добави категория
     </button>
 
   </form>
+
+  <div class="mt-3">
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="finish()">
+      Завърши създаването
+    </button>
+  </div>
 
 </div>

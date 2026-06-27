@@ -10,6 +10,8 @@ import { TemplateCreate } from './features/notification-templates/template-creat
 import { EventListComponent } from './features/events/event-list/event-list.component';
 import { EventCreateComponent } from './features/events/event-create/event-create';
 import { EventDetailsComponent } from './features/events/event-details/event-details';
+import { TicketCategoryCreateComponent } from './features/ticket-categories/ticket-category-create/ticket-category-create';
+
 
 export const routes: Routes = [
   { path: 'register', component: Register },
@@ -22,5 +24,6 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'events', component: EventListComponent },
   { path: 'events/create', component: EventCreateComponent },
-  { path: 'events/:eventId', component: EventDetailsComponent }
+  { path: 'events/:eventId', component: EventDetailsComponent },
+  { path: 'events/:eventId/ticket-categories/create', component: TicketCategoryCreateComponent },
 ];

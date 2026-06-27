@@ -22,6 +22,7 @@ export class TicketCategoryCreateComponent implements OnInit {
   };
 
   errorMessage = '';
+  successMessage = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -36,16 +37,27 @@ export class TicketCategoryCreateComponent implements OnInit {
   }
 
   createCategory(): void {
-    this.ticketCategoryService
-      .createCategory(this.eventId, this.category)
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/events', this.eventId]);
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage = 'Грешка при създаване на категория билети.';
-        }
-      });
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.ticketCategoryService.createCategory(this.eventId, this.category).subscribe({
+      next: () => {
+        this.successMessage = 'Категорията е добавена успешно. Можеш да добавиш още една.';
+
+        this.category = {
+          name: '',
+          quantity: 0,
+          price: 0
+        };
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'Грешка при добавяне на категория билет.';
+      }
+    });
+  }
+
+  finish(): void {
+    this.router.navigate(['/events', this.eventId]);
   }
 }

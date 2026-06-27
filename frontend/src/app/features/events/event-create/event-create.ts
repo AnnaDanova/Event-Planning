@@ -34,9 +34,16 @@ export class EventCreateComponent {
   ) {}
 
   createEvent(): void {
+    this.errorMessage = '';
+
     this.eventService.createEvent(this.event).subscribe({
-      next: () => {
-        this.router.navigate(['/events']);
+      next: (createdEvent) => {
+        this.router.navigate([
+          '/events',
+          createdEvent.id,
+          'ticket-categories',
+          'create'
+        ]);
       },
       error: (err) => {
         console.error(err);

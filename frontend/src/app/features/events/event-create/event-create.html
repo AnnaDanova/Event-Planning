@@ -20,13 +20,12 @@
 
     <div class="mb-3">
       <label class="form-label">Локация</label>
-      <input class="form-control" [(ngModel)]="event.venue" name="venue">
+      <input class="form-control" [(ngModel)]="event.venue" name="venue" required>
     </div>
 
     <div class="mb-3">
       <label class="form-label">Категория</label>
-
-      <select class="form-select" [(ngModel)]="event.category" name="category">
+      <select class="form-select" [(ngModel)]="event.category" name="category" required>
         <option value="CONFERENCE">Conference</option>
         <option value="CONCERT">Concert</option>
         <option value="WORKSHOP">Workshop</option>
@@ -39,7 +38,7 @@
 
     <div class="mb-3">
       <label class="form-label">Капацитет</label>
-      <input type="number" class="form-control" [(ngModel)]="event.capacity" name="capacity">
+      <input type="number" class="form-control" [(ngModel)]="event.capacity" name="capacity" required min="1">
     </div>
 
     <div class="mb-3">
@@ -52,7 +51,12 @@
       <input type="datetime-local" class="form-control" [(ngModel)]="event.endTime" name="endTime" required>
     </div>
 
-    <button type="submit" class="btn btn-primary">Създай</button>
-    <a routerLink="/events" class="btn btn-secondary ms-2">Назад</a>
+    <button type="submit" class="btn btn-primary">
+      Създай и добави билети
+    </button>
+
+    <a routerLink="/events" class="btn btn-secondary ms-2">
+      Назад
+    </a>
   </form>
 </div>
