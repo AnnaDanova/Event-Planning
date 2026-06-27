@@ -26,6 +26,36 @@
         <p><strong>Край:</strong> {{ eventDetails.endTime | date:'dd.MM.yyyy, HH:mm' }}</p>
         <p><strong>Капацитет:</strong> {{ eventDetails.capacity }}</p>
         <p><strong>Статус:</strong> {{ eventDetails.status }}</p>
+        <hr>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Категории билети</h4>
+        </div>
+
+        @if (ticketCategories().length === 0) {
+          <p class="text-muted">
+            Все още няма добавени категории билети.
+          </p>
+        }
+
+        @if (ticketCategories().length > 0) {
+          <div class="list-group mb-3">
+            @for (category of ticketCategories(); track category.id) {
+              <div class="list-group-item">
+                <h5>{{ category.name }}</h5>
+
+                <p class="mb-1">
+                  <strong>Цена:</strong> {{ category.price }} лв.
+                </p>
+
+                <p class="mb-1">
+                  <strong>Оставащи:</strong> {{ category.quantity }}
+                </p>
+
+              </div>
+            }
+          </div>
+        }
 
         <a routerLink="/events" class="btn btn-outline-secondary">
           Назад

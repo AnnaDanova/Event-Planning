@@ -22,5 +22,5 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'events', component: EventListComponent },
   { path: 'events/create', component: EventCreateComponent },
-  { path: 'events/:id', component: EventDetailsComponent }
+  { path: 'events/:eventId', component: EventDetailsComponent }
 ];
