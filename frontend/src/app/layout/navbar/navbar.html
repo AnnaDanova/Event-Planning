@@ -2,22 +2,21 @@
   <div>
     <h2>Evently</h2>
   </div>
-  <div class="search-bar">
-    <input type="text" placeholder="Търси събития"/>
-    <span class="divider"></span>
-    <input type="text" placeholder="Град"/>
-    <button type="button">Търси</button>
-  </div>
-
   <div class="links">
     <a routerLink="/">Начало</a>
     <a routerLink="/events">Събития</a>
+    <a routerLink="/events/create"> Създай събитие </a>
     @if (authService.loggedUser()) {
-      <a routerLink="/my-events">Моите събития</a>
-      <a routerLink="/events/create">Създай събитие</a>
-      <a routerLink="/notifications">Известия</a>
-      <a routerLink="/profile">Профил</a>
-      <button type="button" class="logout-btn" (click)="logout()">Изход</button>
+      <div class="dropdown">
+        <button type="button" class="dropdown-btn"> Меню </button>
+        <div class="dropdown-content">
+          <a routerLink="/my-events">Моите събития</a>
+          <a routerLink="/my-sessions">Моите сесии</a>
+          <a routerLink="/notifications">Известия</a>
+          <a routerLink="/profile">Профил</a>
+          <button type="button" class="logout-btn" (click)="logout()">Изход</button>
+        </div>
+      </div>
     } @else {
       <a routerLink="/login">Вход</a>
       <a routerLink="/register">Регистрация</a>

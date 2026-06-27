@@ -19,8 +19,8 @@ import { SpeakerSessions } from './features/sessions/speaker-sessions/speaker-se
 export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'login', component: Login },
-  { path: 'events', component: EventListComponent },
-  { path: 'events/create', component: EventCreateComponent },
+  { path: 'events', component: EventListComponent},
+  { path: 'events/create', component: EventCreateComponent},
   { path: 'profile', component: UserProfile, canActivate: [authGuard]},
   { path: 'profile/edit', component: EditProfile, canActivate: [authGuard]},
   { path: 'events/:eventId/sessions', component: SessionList, canActivate: [authGuard]},
