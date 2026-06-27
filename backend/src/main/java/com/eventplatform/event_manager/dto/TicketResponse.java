@@ -20,6 +20,6 @@ public class TicketResponse {
     private LocalDateTime eventDateTime;
     private String ticketCategoryName;
     private BigDecimal pricePaid;
-    private LocalDateTime purchaseData;
+    private LocalDateTime purchaseDate;
     private String status;
 }

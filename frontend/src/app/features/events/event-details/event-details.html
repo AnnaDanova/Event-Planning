@@ -10,6 +10,18 @@
     </div>
   }
 
+  @if (successMessage()) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ successMessage() }}
+
+      <button
+        type="button"
+        class="btn-close"
+        (click)="successMessage.set('')">
+      </button>
+    </div>
+  }
+
   @if (event(); as eventDetails) {
     <div class="card shadow-sm">
       <div class="card-body">
@@ -26,6 +38,53 @@
         <p><strong>Край:</strong> {{ eventDetails.endTime | date:'dd.MM.yyyy, HH:mm' }}</p>
         <p><strong>Капацитет:</strong> {{ eventDetails.capacity }}</p>
         <p><strong>Статус:</strong> {{ eventDetails.status }}</p>
+        <hr>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4>Категории билети</h4>
+        </div>
+
+        @if (ticketCategories().length === 0) {
+          <p class="text-muted">
+            Все още няма добавени категории билети.
+          </p>
+        }
+
+        @if (ticketCategories().length > 0) {
+          <div class="list-group mb-3">
+            @for (category of ticketCategories(); track category.id) {
+              <div class="list-group-item">
+                <h5>{{ category.name }}</h5>
+
+                <p class="mb-1">
+                  <strong>Цена:</strong> {{ category.price }} лв.
+                </p>
+
+                <p class="mb-1">
+                  <strong>Оставащи:</strong> {{ category.quantity }}
+                </p>
+
+                @if (category.quantity === 0) {
+
+                  <span class="badge bg-danger mt-2">
+                    Изчерпани
+                  </span>
+
+                } @else {
+
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm mt-2"
+                    (click)="buyTicket(category.id)">
+                    Купи билет
+                  </button>
+
+                }
+
+              </div>
+            }
+          </div>
+        }
 
         <a routerLink="/events" class="btn btn-outline-secondary">
           Назад

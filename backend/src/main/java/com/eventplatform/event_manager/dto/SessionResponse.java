@@ -4,6 +4,7 @@ import com.eventplatform.event_manager.domain.enums.SessionStatus;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.eventplatform.event_manager.dto.UserResponse;
 
 @Getter
 @AllArgsConstructor

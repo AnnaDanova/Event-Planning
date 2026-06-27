@@ -59,8 +59,15 @@ public class TicketCategoryService {
 
     public List<TicketCategoryResponse> getCategoriesByEventId(Long eventId) {
         eventService.getEventEntityById(eventId);
-        return ticketCategoryRepository.findByEventId(eventId).stream()
+        return ticketCategoryRepository.findByEventIdOrderByPriceAsc(eventId).stream()
                 .map(ticketCategoryMapper::toResponse)
                 .toList();
+    }
+
+    public TicketCategoryResponse getCategoryById(Long categoryId) {
+        TicketCategory category = ticketCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Категорията не е намерена!"));
+
+        return ticketCategoryMapper.toResponse(category);
     }
 }

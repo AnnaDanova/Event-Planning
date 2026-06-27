@@ -14,9 +14,6 @@ import { UserRegisterRequest } from '../../../core/models/user.model';
 export class Register {
   registerData: UserRegisterRequest = {
     username: '',
-    firstName: '',
-    lastName: '',
-    bio: '',
     email: '',
     password: '',
     address: ''

@@ -30,7 +30,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User getUserEntityById(Long id) {
-        User user = userRepository.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Потребителят не е намерен!"));
         if (!user.getActive()) {
             throw new RuntimeException("Потребителят е деактивиран!");

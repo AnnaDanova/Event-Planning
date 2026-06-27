@@ -44,4 +44,13 @@ public class EventController {
             eventService.deleteEvent(eventId);
             return ResponseEntity.noContent().build();
         }
+
+    @GetMapping("/organizer/{organizerId}")
+    public ResponseEntity<List<EventShortResponse>> getEventsByOrganizer(
+            @PathVariable Long organizerId) {
+
+        return ResponseEntity.ok(
+                eventService.getEventsByOrganizer(organizerId)
+        );
     }
+}

@@ -19,15 +19,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    @Column(columnDefinition = "TEXT")
-    private String bio;
-
     @Column(nullable = false, unique = true)
     private String email;
 

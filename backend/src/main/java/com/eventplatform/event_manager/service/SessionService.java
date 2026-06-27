@@ -56,7 +56,7 @@ public class SessionService {
         return sessionMapper.toResponse(getSessionEntityById(id));
     }
 
-    public SessionResponse createSession(Long eventId, Long userId, SessionCreateRequest request) {
+    public SessionResponse createSession(Long eventId, SessionCreateRequest request) {
         Event event = eventService.getEventEntityById(eventId);
         if (!isOrganizer(event, userId)) {
             throw new RuntimeException("Само организаторът може да създава сесии.");
@@ -157,6 +157,7 @@ public class SessionService {
         if (start == null || end == null) {
             throw new IllegalArgumentException("Началният и крайният час на сесията са задължителни!");
         }
+
         if (!end.isAfter(start)) {
             throw new IllegalArgumentException("Крайният час на сесията трябва да бъде след началния час!");
         }
