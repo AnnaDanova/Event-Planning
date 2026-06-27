@@ -110,7 +110,7 @@ public class EventService {
     }
 
     public List<EventShortResponse> getEventsByOrganizer(Long organizerId) {
-        return eventRepository.findByOrganizerId(organizerId)
+        return eventRepository.findByOrganizerIdOrderByStartTimeAsc(organizerId)
                 .stream()
                 .map(eventMapper::toShortResponse)
                 .toList();
