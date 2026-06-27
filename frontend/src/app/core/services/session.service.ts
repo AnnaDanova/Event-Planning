@@ -20,24 +20,24 @@ export class SessionService {
     return this.http.get<SessionResponse>(`${this.baseUrl}/${eventId}/sessions/${sessionId}`);
   }
 
-  createSession(eventId: number, request: SessionCreateRequest): Observable<SessionResponse> {
-    return this.http.post<SessionResponse>(`${this.baseUrl}/${eventId}/sessions`, request);
+  createSession(eventId: number, userId: number, request: SessionCreateRequest): Observable<SessionResponse> {
+    return this.http.post<SessionResponse>(`${this.baseUrl}/${eventId}/sessions?userId=${userId}`, request);
   }
 
-  updateSession(eventId: number, sessionId: number, request: SessionCreateRequest): Observable<SessionResponse> {
-    return this.http.put<SessionResponse>(`${this.baseUrl}/${eventId}/sessions/${sessionId}`, request);
+  updateSession(eventId: number, sessionId: number, userId: number, request: SessionCreateRequest): Observable<SessionResponse> {
+    return this.http.put<SessionResponse>(`${this.baseUrl}/${eventId}/sessions/${sessionId}?userId=${userId}`, request);
   }
 
-  deleteSession(eventId: number, sessionId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}`);
+  deleteSession(eventId: number, sessionId: number, userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}?userId=${userId}`);
   }
 
-  addSpeakerToSession(eventId: number, sessionId: number, speakerId: number): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers`, speakerId);
+  addSpeakerToSession(eventId: number, sessionId: number, speakerId: number, userId: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers?userId=${userId}`, speakerId);
   }
 
-  removeSpeakerFromSession(eventId: number, sessionId: number, speakerId: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers/${speakerId}`);
+  removeSpeakerFromSession(eventId: number, sessionId: number, speakerId: number, userId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${eventId}/sessions/${sessionId}/speakers/${speakerId}?userId=${userId}`);
   }
 
   getSpeakersBySessionId(eventId: number, sessionId: number): Observable<SpeakerResponse[]> {

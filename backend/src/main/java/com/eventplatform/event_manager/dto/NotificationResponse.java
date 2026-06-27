@@ -1,6 +1,10 @@
 package com.eventplatform.event_manager.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter

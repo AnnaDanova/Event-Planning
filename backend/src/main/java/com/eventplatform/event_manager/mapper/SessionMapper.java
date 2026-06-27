@@ -39,6 +39,7 @@ public class SessionMapper {
                 session.getTitle(),
                 session.getEvent().getId(),
                 session.getEvent().getTitle(),
+                session.getEvent().getOrganizer().getId(),
                 session.getDescription(),
                 session.getStartTime(),
                 session.getEndTime(),

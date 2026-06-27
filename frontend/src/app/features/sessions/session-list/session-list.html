@@ -8,9 +8,9 @@
     }
 
     <div class="actions">
-      <a class="btn" [routerLink]="['/events', eventId, 'sessions', 'create']">
-        Добави нова сесия
-      </a>
+    @if (canManageEvent()) {
+      <a class="btn" [routerLink]="['/events', eventId, 'sessions', 'create']">Добави нова сесия</a>
+    }
     </div>
 
     @if (sessions().length === 0 && !errorMessage) {
@@ -52,19 +52,16 @@
               }
             </div>
           }
-
           <div class="actions">
-            <a class="btn btn-secondary" [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']">
-              Редактиране
-            </a>
-
-            <button type="button" (click)="deleteSession(session.id)">
-              Изтриване
-            </button>
+              @if (canEditSession(session)) {
+                  <a class="btn btn-secondary" [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']">Редактиране</a>
+              }
+              @if (canDeleteSession(session)) {
+                  <button type="button" (click)="deleteSession(session.id)">Изтриване</button>
+              }
           </div>
         </div>
       }
     </div>
-
   </div>
 </section>

@@ -30,6 +30,13 @@ public class EventService {
         return eventMapper.toDetailsResponse(getEventEntityById(id));
     }
 
+    public List<EventDetailsResponse> getEventByUserId(Long userId) {
+        return eventRepository.findByOrganizerId(userId)
+                .stream()
+                .map(eventMapper::toDetailsResponse)
+                .collect(toList());
+    }
+
     public List<EventShortResponse> getAllEvents() {
         return eventRepository.findAll()
                 .stream()

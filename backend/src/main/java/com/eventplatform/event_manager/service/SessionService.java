@@ -56,8 +56,11 @@ public class SessionService {
         return sessionMapper.toResponse(getSessionEntityById(id));
     }
 
-    public SessionResponse createSession(Long eventId, SessionCreateRequest request) {
+    public SessionResponse createSession(Long eventId, Long userId, SessionCreateRequest request) {
         Event event = eventService.getEventEntityById(eventId);
+        if (!isOrganizer(event, userId)) {
+            throw new RuntimeException("Само организаторът може да създава сесии.");
+        }
         validateTime(request.getStartTime(), request.getEndTime());
         Session session = new Session();
         session.setEvent(event);
@@ -69,8 +72,12 @@ public class SessionService {
         return sessionMapper.toResponse(sessionRepository.save(session));
     }
 
-    public SessionResponse updateSession(Long id, SessionCreateRequest request) {
+    public SessionResponse updateSession(Long id, Long userId, SessionCreateRequest request) {
         Session session = getSessionEntityById(id);
+        boolean allowed = isOrganizer(session.getEvent(), userId) || isSpeaker(session, userId);
+        if (!allowed) {
+            throw new RuntimeException("Нямате право да редактирате тази сесия.");
+        }
         validateTime(request.getStartTime(), request.getEndTime());
         if (request.getTitle() != null) {
             session.setTitle(request.getTitle());
@@ -84,9 +91,16 @@ public class SessionService {
     }
 
     @Transactional
-    public void deleteSession(Long id) {
+    public void deleteSession(Long id, Long userId) {
         Session session = getSessionEntityById(id);
+        if (!isOrganizer(session.getEvent(), userId)) {
+            throw new RuntimeException("Само организаторът може да изтрива сесии.");
+        }
         session.setStatus(SessionStatus.ARCHIVED);
+        sessionRepository.save(session);
+        for (User speaker : session.getSpeakers()) {
+            notificationService.sendSessionCancelledNotification(speaker.getId(), session.getEvent().getId(), session.getId());
+        }
         sessionRepository.save(session);
     }
 
@@ -100,16 +114,22 @@ public class SessionService {
     }
 
     @Transactional
-    public void addSpeakerToSession(Long sessionId, Long speakerId) {
+    public void addSpeakerToSession(Long sessionId, Long speakerId, Long userId) {
         Session session = getSessionEntityById(sessionId);
+        if (!isOrganizer(session.getEvent(), userId)) {
+            throw new RuntimeException("Само организаторът може да добавя лектори.");
+        }
         User speaker = userService.getUserEntityById(speakerId);
         session.getSpeakers().add(speaker);
         Session savedSession = sessionRepository.save(session);
         notificationService.sendSpeakerAssignedNotification(speaker.getId(), savedSession.getEvent().getId(), savedSession.getId());
     }
 
-    public void removeSpeakerFromSession(Long sessionId, Long speakerId) {
+    public void removeSpeakerFromSession(Long sessionId, Long speakerId, Long userId) {
         Session session = getSessionEntityById(sessionId);
+        if (!isOrganizer(session.getEvent(), userId)) {
+            throw new RuntimeException("Само организаторът може да премахва лектори.");
+        }
         User speaker = userService.getUserEntityById(speakerId);
         session.getSpeakers().remove(speaker);
         sessionRepository.save(session);
@@ -191,5 +211,16 @@ public class SessionService {
             throw new RuntimeException("Could not delete file.", e);
         }
         sessionMaterialRepository.delete(material);
+    }
+
+    private boolean isOrganizer(Event event, Long userId) {
+        return event.getOrganizer() != null
+                && event.getOrganizer().getId().equals(userId);
+    }
+
+    private boolean isSpeaker(Session session, Long userId) {
+        return session.getSpeakers()
+                .stream()
+                .anyMatch(speaker -> speaker.getId().equals(userId));
     }
 }

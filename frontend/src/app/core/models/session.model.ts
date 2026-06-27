@@ -19,6 +19,7 @@ export interface SessionResponse {
   title: string;
   eventId: number;
   eventTitle: string;
+  organizerId: number;
   description: string;
   startTime: string;
   endTime: string;

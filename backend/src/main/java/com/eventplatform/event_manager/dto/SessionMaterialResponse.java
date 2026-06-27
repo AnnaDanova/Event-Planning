@@ -6,12 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class SessionMaterialResponse {
-    private Long id;
-    private String fileName;
-    private String fileUrl;
-    private String fileType;
+    private final Long id;
+    private final String fileName;
+    private final String fileUrl;
+    private final String fileType;
 }

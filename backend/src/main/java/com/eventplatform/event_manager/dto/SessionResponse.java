@@ -4,21 +4,19 @@ import com.eventplatform.event_manager.domain.enums.SessionStatus;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.eventplatform.event_manager.dto.UserResponse;
 
 @Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class SessionResponse {
-    private Long id;
-    private String title;
-    private Long eventId;
-    private String eventTitle;
-    private String description;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private SessionStatus status;
-    private List<SessionMaterialResponse> materials;
-    private List<UserResponse> speakers;
+    private final Long id;
+    private final String title;
+    private final Long eventId;
+    private final String eventTitle;
+    private final Long organizerId;
+    private final String description;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
+    private final SessionStatus status;
+    private final List<SessionMaterialResponse> materials;
+    private final List<UserResponse> speakers;
 }

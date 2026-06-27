@@ -4,6 +4,7 @@ import com.eventplatform.event_manager.domain.Notification;
 import com.eventplatform.event_manager.domain.NotificationTemplate;
 import com.eventplatform.event_manager.domain.User;
 import com.eventplatform.event_manager.domain.enums.NotificationStatus;
+import com.eventplatform.event_manager.domain.enums.NotificationType;
 import com.eventplatform.event_manager.dto.NotificationResponse;
 import com.eventplatform.event_manager.mapper.NotificationMapper;
 import com.eventplatform.event_manager.repository.NotificationRepository;
@@ -98,4 +99,17 @@ public class NotificationService {
         notification.setStatus(NotificationStatus.SENT);
         return notificationMapper.toResponse(notificationRepository.save(notification));
     }
+
+    @Transactional
+    public NotificationResponse sendSessionCancelledNotification(Long speakerId, Long eventId, Long sessionId) {
+        User speaker = userService.getUserEntityById(speakerId);
+        NotificationTemplate template = templateService.createInstantTemplate(eventId, sessionId, "Сесията, към която сте добавени като лектор, беше отменена от организатора.", NotificationType.SCHEDULE_CHANGED);
+        Notification notification = new Notification();
+        notification.setUser(speaker);
+        notification.setTemplate(template);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setStatus(NotificationStatus.SENT);
+        return notificationMapper.toResponse(notificationRepository.save(notification));
+    }
+
 }

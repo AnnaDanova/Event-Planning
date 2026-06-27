@@ -1,6 +1,7 @@
 package com.eventplatform.event_manager.controller;
 
 import com.eventplatform.event_manager.dto.*;
+import com.eventplatform.event_manager.service.EventService;
 import com.eventplatform.event_manager.service.SessionService;
 import com.eventplatform.event_manager.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ public class UserController {
 
     private final UserService userService;
     private final SessionService sessionService;
+    private final EventService eventService;
 
-    public UserController(UserService userService,SessionService sessionService) {
+    public UserController(UserService userService,SessionService sessionService,EventService eventService) {
         this.userService = userService;
         this.sessionService = sessionService;
+        this.eventService = eventService;
     }
 
     @PostMapping("/register")
@@ -64,5 +67,9 @@ public class UserController {
     @GetMapping("/{userId}/speaker-sessions")
     public ResponseEntity<List<SessionResponse>> getSpeakerSessions(@PathVariable Long userId) {
         return ResponseEntity.ok(sessionService.getSessionsBySpeaker(userId));
+    }
+    @GetMapping("/{userId}/my-events")
+    public ResponseEntity<List<EventDetailsResponse>> getMyEvents(@PathVariable Long userId) {
+        return ResponseEntity.ok(eventService.getEventByUserId(userId));
     }
 }

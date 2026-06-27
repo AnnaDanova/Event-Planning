@@ -4,9 +4,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { SessionService } from '../../../core/services/session.service';
 import { SessionCreateRequest } from '../../../core/models/session.model';
-import {UserResponse} from '../../../core/models/user.model';
-import {UserService} from '../../../core/services/user.service';
-
+import { UserResponse } from '../../../core/models/user.model';
+import { UserService } from '../../../core/services/user.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-session-create',
@@ -34,49 +34,52 @@ export class SessionCreate {
     private route: ActivatedRoute,
     private router: Router,
     private sessionService: SessionService,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
   }
 
   createSession(): void {
-    this.sessionService.createSession(this.eventId, this.sessionData).subscribe({
+    const user = this.authService.getLoggedUser();
+    if (!user) {
+      this.errorMessage = 'Трябва да сте вписани.';
+      return;
+    }
+    this.sessionService.createSession(this.eventId, user.id, this.sessionData).subscribe({
       next: (createdSession) => {
         this.addSpeakers(createdSession.id);
       },
       error: (err) => {
         console.log('CREATE SESSION ERROR:', err);
-        this.errorMessage = 'Could not create session.';
+        this.errorMessage = 'Само организаторът може да създава сесии.';
       }
     });
   }
 
   private addSpeakers(sessionId: number): void {
+    const user = this.authService.getLoggedUser();
+    if (!user) {
+      this.errorMessage = 'Трябва да сте вписани.';
+      return;
+    }
     const speakers = this.selectedSpeakers();
-
     if (speakers.length === 0) {
       this.router.navigate(['/events', this.eventId, 'sessions']);
       return;
     }
-
     let completed = 0;
-
     speakers.forEach(speaker => {
-      this.sessionService.addSpeakerToSession(
-        this.eventId,
-        sessionId,
-        speaker.id
-      ).subscribe({
+      this.sessionService.addSpeakerToSession(this.eventId, sessionId, speaker.id, user.id).subscribe({
         next: () => {
           completed++;
-
           if (completed === speakers.length) {
             this.router.navigate(['/events', this.eventId, 'sessions']);
           }
         },
         error: (err) => {
           console.log('ADD SPEAKER ERROR:', err);
-          this.errorMessage = 'Session was created, but one or more speakers could not be added.';
+          this.errorMessage = 'Сесията е създадена, но един или повече лектори не можаха да бъдат добавени.';
         }
       });
     });

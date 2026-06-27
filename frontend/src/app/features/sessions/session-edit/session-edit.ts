@@ -7,6 +7,7 @@ import { SessionCreateRequest, SessionMaterialResponse } from '../../../core/mod
 import { UserService } from '../../../core/services/user.service';
 import { UserResponse } from '../../../core/models/user.model';
 import { SpeakerResponse } from '../../../core/models/speaker.model';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-session-edit',
@@ -15,7 +16,6 @@ import { SpeakerResponse } from '../../../core/models/speaker.model';
   styleUrl: './session-edit.css'
 })
 export class SessionEdit implements OnInit {
-
   eventId!: number;
   sessionId!: number;
   speakerSearch = '';
@@ -23,7 +23,6 @@ export class SessionEdit implements OnInit {
   currentSpeakers = signal<SpeakerResponse[]>([]);
   selectedMaterial: File | null = null;
   materials = signal<SessionMaterialResponse[]>([]);
-
   sessionData = signal<SessionCreateRequest>({
     title: '',
     description: '',
@@ -31,18 +30,21 @@ export class SessionEdit implements OnInit {
     endTime: ''
   });
   errorMessage = '';
+  loggedUser!: UserResponse | null;
+  organizerId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private sessionService: SessionService,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.loggedUser = this.authService.getLoggedUser();
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
     this.sessionId = Number(this.route.snapshot.paramMap.get('sessionId'));
-
     this.loadSession();
     this.loadSpeakers();
     this.loadMaterials();
@@ -51,6 +53,7 @@ export class SessionEdit implements OnInit {
   loadSession(): void {
     this.sessionService.getSessionById(this.eventId, this.sessionId).subscribe({
       next: (session) => {
+        this.organizerId = session.organizerId;
         this.sessionData.set({
           title: session.title,
           description: session.description,
@@ -104,40 +107,42 @@ export class SessionEdit implements OnInit {
   }
 
   addSpeaker(user: UserResponse): void {
+    if (!this.loggedUser) {
+      this.errorMessage = 'Трябва да сте вписани.';
+      return;
+    }
     const alreadyAdded = this.currentSpeakers().some(speaker => speaker.id === user.id);
     if (alreadyAdded) {
       this.speakerSearch = '';
       this.speakerResults.set([]);
       return;
     }
-    this.sessionService.addSpeakerToSession(this.eventId, this.sessionId, user.id).subscribe({
+    this.sessionService.addSpeakerToSession(this.eventId, this.sessionId, user.id, this.loggedUser.id).subscribe({
       next: () => {
         this.currentSpeakers.update(speakers => [
-          ...speakers,
-          {
+          ...speakers, {
             id: user.id,
             fullName: `${user.firstName} ${user.lastName}`,
             bio: user.bio,
             profilePhoto: user.profilePhoto
           }
         ]);
-
         this.speakerSearch = '';
         this.speakerResults.set([]);
       },
       error: (err) => {
         console.log('ADD SPEAKER ERROR:', err);
-        this.errorMessage = 'Could not add speaker.';
+        this.errorMessage = 'Нямате право да добавяте лектори.';
       }
     });
   }
 
   removeSpeaker(speakerId: number): void {
-    this.sessionService.removeSpeakerFromSession(
-      this.eventId,
-      this.sessionId,
-      speakerId
-    ).subscribe({
+    if (!this.loggedUser) {
+      this.errorMessage = 'Трябва да сте вписани.';
+      return;
+    }
+    this.sessionService.removeSpeakerFromSession(this.eventId, this.sessionId, speakerId, this.loggedUser.id).subscribe({
       next: () => {
         this.currentSpeakers.update(speakers =>
           speakers.filter(speaker => speaker.id !== speakerId)
@@ -145,19 +150,23 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('REMOVE SPEAKER ERROR:', err);
-        this.errorMessage = 'Could not remove speaker.';
+        this.errorMessage = 'Нямате право да премахвате лектори.';
       }
     });
   }
 
   updateSession(): void {
-    this.sessionService.updateSession(this.eventId, this.sessionId, this.sessionData()).subscribe({
+    if (!this.loggedUser) {
+      this.errorMessage = 'Трябва да сте вписани.';
+      return;
+    }
+    this.sessionService.updateSession(this.eventId, this.sessionId, this.loggedUser.id, this.sessionData()).subscribe({
       next: () => {
         this.router.navigate(['/events', this.eventId, 'sessions']);
       },
       error: (err) => {
         console.log('UPDATE SESSION ERROR:', err);
-        this.errorMessage = 'Could not update session.';
+        this.errorMessage = 'Нямате право да редактирате тази сесия.';
       }
     });
   }
@@ -214,5 +223,13 @@ export class SessionEdit implements OnInit {
         this.errorMessage = 'Материалът не можа да бъде изтрит.';
       }
     });
+  }
+
+  isSpeaker(): boolean {
+    return !!this.loggedUser && this.currentSpeakers().some(speaker => speaker.id === this.loggedUser!.id);
+  }
+
+  isOrganizer(): boolean {
+    return !!this.loggedUser && this.organizerId === this.loggedUser.id;
   }
 }
