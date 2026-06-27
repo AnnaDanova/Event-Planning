@@ -59,7 +59,7 @@ public class TicketCategoryService {
 
     public List<TicketCategoryResponse> getCategoriesByEventId(Long eventId) {
         eventService.getEventEntityById(eventId);
-        return ticketCategoryRepository.findByEventId(eventId).stream()
+        return ticketCategoryRepository.findByEventIdOrderByPriceAsc(eventId).stream()
                 .map(ticketCategoryMapper::toResponse)
                 .toList();
     }

@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface TicketCategoryRepository extends JpaRepository<TicketCategory, Long> {
 
-    List<TicketCategory> findByEventId(Long eventId);
+    List<TicketCategory> findByEventIdOrderByPriceAsc(Long eventId);
 }

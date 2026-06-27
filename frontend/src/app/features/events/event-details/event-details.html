@@ -10,6 +10,18 @@
     </div>
   }
 
+  @if (successMessage()) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ successMessage() }}
+
+      <button
+        type="button"
+        class="btn-close"
+        (click)="successMessage.set('')">
+      </button>
+    </div>
+  }
+
   @if (event(); as eventDetails) {
     <div class="card shadow-sm">
       <div class="card-body">
@@ -51,6 +63,23 @@
                 <p class="mb-1">
                   <strong>Оставащи:</strong> {{ category.quantity }}
                 </p>
+
+                @if (category.quantity === 0) {
+
+                  <span class="badge bg-danger mt-2">
+                    Изчерпани
+                  </span>
+
+                } @else {
+
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm mt-2"
+                    (click)="buyTicket(category.id)">
+                    Купи билет
+                  </button>
+
+                }
 
               </div>
             }
