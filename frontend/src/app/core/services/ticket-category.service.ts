@@ -37,6 +37,12 @@ export class TicketCategoryService {
       `${this.apiUrl}/${eventId}/ticket-categories/${categoryId}`,
     )
   }
+
+  getCategory(eventId: number, categoryId: number): Observable<TicketCategoryResponse> {
+    return this.http.get<TicketCategoryResponse>(
+      `${this.apiUrl}/${eventId}/ticket-categories/${categoryId}`
+    );
+  }
 }
 
 

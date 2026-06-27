@@ -63,4 +63,11 @@ public class TicketCategoryService {
                 .map(ticketCategoryMapper::toResponse)
                 .toList();
     }
+
+    public TicketCategoryResponse getCategoryById(Long categoryId) {
+        TicketCategory category = ticketCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Категорията не е намерена!"));
+
+        return ticketCategoryMapper.toResponse(category);
+    }
 }
