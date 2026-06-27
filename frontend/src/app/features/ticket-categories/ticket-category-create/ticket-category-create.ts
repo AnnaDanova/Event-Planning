@@ -23,6 +23,7 @@ export class TicketCategoryCreateComponent implements OnInit {
 
   errorMessage = '';
   successMessage = '';
+  returnTo = 'details';
 
   constructor(
     private route: ActivatedRoute,
@@ -31,9 +32,10 @@ export class TicketCategoryCreateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.eventId = Number(
-      this.route.snapshot.paramMap.get('eventId')
-    );
+    this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
+
+    this.returnTo =
+      this.route.snapshot.queryParamMap.get('returnTo') ?? 'details';
   }
 
   createCategory(): void {
@@ -58,6 +60,12 @@ export class TicketCategoryCreateComponent implements OnInit {
   }
 
   finish(): void {
-    this.router.navigate(['/events', this.eventId]);
+
+    if (this.returnTo === 'edit') {
+      this.router.navigate(['/events', this.eventId, 'edit']);
+    } else {
+      this.router.navigate(['/events', this.eventId]);
+    }
+
   }
 }

@@ -38,12 +38,14 @@ export class EventCreateComponent {
 
     this.eventService.createEvent(this.event).subscribe({
       next: (createdEvent) => {
-        this.router.navigate([
-          '/events',
-          createdEvent.id,
-          'ticket-categories',
-          'create'
-        ]);
+        this.router.navigate(
+          ['/events', createdEvent.id, 'ticket-categories', 'create'],
+          {
+            queryParams: {
+              returnTo: 'details'
+            }
+          }
+        );
       },
       error: (err) => {
         console.error(err);
