@@ -41,15 +41,20 @@ public class NotificationScheduler {
             tickets.stream()
                     .map(Ticket::getUser)
                     .distinct()
-                    .forEach(user ->
-                            notificationService.sendNotification(user.getId(), template.getId())
-                    );
+                    .forEach(user -> {
+                        try {
+                            notificationService.sendNotification(user.getId(), template.getId());
+                        } catch (Exception e) {
+                            System.out.println("Грешка при изпращане на нотификация: " + e.getMessage());
+                        }
+                    });
 
             if (template.getEvent().getOrganizer() != null) {
-                notificationService.sendNotification(
-                        template.getEvent().getOrganizer().getId(),
-                        template.getId()
-                );
+                try {
+                    notificationService.sendNotification(template.getEvent().getOrganizer().getId(), template.getId());
+                } catch (Exception e) {
+                    System.out.println("Грешка при изпращане на нотификация към организатор: " + e.getMessage());
+                }
             }
             template.setSent(true);
             templateRepository.save(template);

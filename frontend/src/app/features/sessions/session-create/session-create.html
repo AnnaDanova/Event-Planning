@@ -1,8 +1,8 @@
 <section class="page">
   <form class="form-card" (ngSubmit)="createSession()">
     <h2>Създаване на сесия</h2>
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage()}}</p>
     }
     <div class="form-group">
       <label>Тема</label>

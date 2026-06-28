@@ -1,6 +1,4 @@
 package com.eventplatform.event_manager.service;
-
-
 import com.eventplatform.event_manager.domain.Event;
 import com.eventplatform.event_manager.domain.Ticket;
 import com.eventplatform.event_manager.domain.TicketCategory;
@@ -14,7 +12,9 @@ import com.eventplatform.event_manager.mapper.UserMapper;
 import com.eventplatform.event_manager.repository.TicketRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,10 +38,10 @@ public class TicketService {
         Event event = eventService.getEventEntityById(eventId);
         TicketCategory category = ticketCategoryService.getCategoryEntityById(categoryId);
         if (event.getStatus() == EventStatus.CANCELLED || event.getStatus() == EventStatus.ARCHIVED) {
-            throw new IllegalStateException("Събитието не е активно!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Събитието не е активно!");
         }
         if (category.getQuantity() <= 0) {
-            throw new IllegalStateException("Билетите са разпродадени!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Билетите са разпродадени!");
         }
         category.setQuantity(category.getQuantity() - 1);
         ticketCategoryService.save(category);

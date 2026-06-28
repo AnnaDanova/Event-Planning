@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import { SessionService } from '../../../core/services/session.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionResponse } from '../../../core/models/session.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-speaker-sessions',
@@ -33,8 +34,9 @@ export class SpeakerSessions implements OnInit {
         this.sessions.set(sessions);
         this.isLoading.set(false);
       },
-      error: () => {
-        this.errorMessage.set('Неуспешно зареждане на сесиите.');
+      error: (err) => {
+        console.log('SPEAKER SESSIONS ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
         this.isLoading.set(false);
       }
     });

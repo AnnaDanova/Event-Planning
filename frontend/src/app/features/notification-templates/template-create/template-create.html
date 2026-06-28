@@ -1,8 +1,8 @@
 <section class="page">
   <form class="form-card" (ngSubmit)="createTemplate()">
     <h2>Създаване на шаблон за известие</h2>
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
     }
     <div class="form-group">
       <label>Съобщение</label>

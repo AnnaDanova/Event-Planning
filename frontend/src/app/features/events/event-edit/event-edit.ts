@@ -2,10 +2,10 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { EventService } from '../../../core/services/event.service';
 import { TicketCategoryService } from '../../../core/services/ticket-category.service';
 import { TicketCategoryResponse } from '../../../core/models/ticket-category.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-event-edit',
@@ -69,7 +69,7 @@ export class EventEditComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Грешка при зареждане на събитието.');
+        this.errorMessage.set(getErrorMessage(err));
         this.isLoading.set(false);
       }
     });
@@ -85,8 +85,7 @@ export class EventEditComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        console.log(err.error);
-        this.errorMessage.set('Грешка при обновяване на събитието.');
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -98,7 +97,7 @@ export class EventEditComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Грешка при зареждане на категориите билети.');
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -107,7 +106,6 @@ export class EventEditComponent implements OnInit {
     if (!confirm('Сигурен ли си, че искаш да изтриеш тази категория?')) {
       return;
     }
-
     this.ticketCategoryService.deleteCategory(this.eventId, categoryId).subscribe({
       next: () => {
         this.successMessage.set('Категорията е изтрита успешно.');
@@ -115,7 +113,7 @@ export class EventEditComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Грешка при изтриване на категория.');
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

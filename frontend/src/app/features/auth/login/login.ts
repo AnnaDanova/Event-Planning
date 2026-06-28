@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserLoginRequest } from '../../../core/models/user.model';
 
@@ -17,7 +17,7 @@ export class Login {
     password: ''
   };
 
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(
     private authService: AuthService,
@@ -25,20 +25,17 @@ export class Login {
   ) {}
 
   login(): void {
-    this.errorMessage ='';
+    this.errorMessage.set('');
     this.authService.login(this.loginData).subscribe({
       next: (user) => {
         this.authService.saveLoggedUser(user);
         this.router.navigate(['/']);
       },
       error: (err) => {
-          console.log('LOGIN ERROR:', err);
-          if (err.error?.message) {
-            this.errorMessage = err.error.message;
-          } else {
-            this.errorMessage = 'Невалиден имейл или парола.';
-          }
-        }
+        const message = getErrorMessage(err);
+        console.log('MESSAGE:', message);
+        this.errorMessage.set(message);
+      }
     });
   }
 }

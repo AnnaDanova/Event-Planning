@@ -1,9 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
 import { EventService } from '../../../core/services/event.service';
 import { EventShortResponse } from '../../../core/models/event.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-my-events',
@@ -53,8 +53,9 @@ export class MyEventsComponent implements OnInit {
         this.events.set(events);
         this.isLoading.set(false);
       },
-      error: () => {
-        this.errorMessage.set('Грешка при зареждане на събитията.');
+      error: (err) => {
+        console.error(err);
+        this.errorMessage.set(getErrorMessage(err));
         this.isLoading.set(false);
       }
     });

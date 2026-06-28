@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { UserRegisterRequest } from '../../../core/models/user.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-register',
@@ -22,8 +23,8 @@ export class Register {
     address: ''
   };
 
-  errorMessage = '';
-  successMessage = '';
+  errorMessage = signal('');
+  successMessage = signal('');
 
   constructor(
     private authService: AuthService,
@@ -31,14 +32,17 @@ export class Register {
   ) {}
 
   register(): void {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
     this.authService.register(this.registerData).subscribe({
       next: (user) => {
         this.authService.saveLoggedUser(user);
-        this.successMessage = 'Registration successful!';
+        this.successMessage.set('Регистрацията е успешна!');
         this.router.navigate(['/login']);
       },
-      error: () => {
-        this.errorMessage = 'Registration failed!';
+      error: (err) => {
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

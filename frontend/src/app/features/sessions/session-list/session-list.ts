@@ -1,7 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-
 import { AuthService } from '../../../core/services/auth.service';
 import { SessionService } from '../../../core/services/session.service';
 import { SessionResponse } from '../../../core/models/session.model';
@@ -9,7 +8,7 @@ import { SpeakerResponse } from '../../../core/models/speaker.model';
 import { UserResponse } from '../../../core/models/user.model';
 import {EventDetailsResponse} from '../../../core/models/event.model';
 import {EventService} from '../../../core/services/event.service';
-
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-session-list',
@@ -22,7 +21,7 @@ export class SessionList implements OnInit {
   sessions = signal<SessionResponse[]>([]);
   sessionSpeakers = signal<Record<number, SpeakerResponse[]>>({});
   eventId!: number;
-  errorMessage = '';
+  errorMessage = signal('');
   loggedUser: UserResponse | null = null;
   event = signal<EventDetailsResponse | null>(null);
 
@@ -50,7 +49,7 @@ export class SessionList implements OnInit {
       },
       error: (err) => {
         console.log('SESSION LIST ERROR:', err);
-        this.errorMessage = 'Could not load sessions.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -58,7 +57,10 @@ export class SessionList implements OnInit {
   loadEvent(): void {
     this.eventService.getEventById(this.eventId).subscribe({
       next: (event) => this.event.set(event),
-      error: () => console.error('Error loading event')
+      error: (err) => {
+        console.error('Error loading event', err);
+        this.errorMessage.set(getErrorMessage(err));
+      }
     });
   }
 
@@ -72,6 +74,7 @@ export class SessionList implements OnInit {
       },
       error: (err) => {
         console.log('LOAD SPEAKERS ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -80,7 +83,7 @@ export class SessionList implements OnInit {
     const user = this.authService.getLoggedUser();
 
     if (!user) {
-      this.errorMessage = 'Трябва да сте вписани.';
+      this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
     this.sessionService.deleteSession(this.eventId, sessionId, user.id).subscribe({
@@ -91,7 +94,7 @@ export class SessionList implements OnInit {
       },
       error: (err) => {
         console.log('DELETE SESSION ERROR:', err);
-        this.errorMessage = 'Само организаторът може да изтрива сесии.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

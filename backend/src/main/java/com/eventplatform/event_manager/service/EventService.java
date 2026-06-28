@@ -9,7 +9,10 @@ import com.eventplatform.event_manager.mapper.EventMapper;
 import com.eventplatform.event_manager.repository.EventRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
@@ -24,7 +27,7 @@ public class EventService {
 
     public Event getEventEntityById(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Събитието с ID " + id + " не беше намерено!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Събитието с ID " + id + " не беше намерено!"));
     }
 
     public EventDetailsResponse getEventById(Long id) {
@@ -98,22 +101,22 @@ public class EventService {
 
     private void validateEventData(String title, Integer capacity, LocalDateTime startTime, LocalDateTime endTime) {
         if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Заглавието на събитието не може да бъде празно!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Заглавието на събитието не може да бъде празно!");
         }
         if (capacity == null || capacity <= 0) {
-            throw new IllegalArgumentException("Капацитетът на събитието трябва да бъде по-голям от 0!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Капацитетът на събитието трябва да бъде по-голям от 0!");
         }
         if (startTime == null) {
-            throw new IllegalArgumentException("Трябва да посочите дата и час на започване на събитието!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Трябва да посочите дата и час на започване на събитието!");
         }
         if (endTime == null) {
-            throw new IllegalArgumentException("Трябва да посочите дата и час на приключване на събитието!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Трябва да посочите дата и час на приключване на събитието!");
         }
         if (startTime.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Датата и часът на започване на събитието са невалидни!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Датата и часът на започване на събитието са невалидни!");
         }
         if (endTime.isBefore(LocalDateTime.now()) || endTime.isBefore(startTime)) {
-            throw new IllegalArgumentException("Датата и часът на приключване на събитието са невалидни!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Датата и часът на приключване на събитието са невалидни!");
         }
     }
 

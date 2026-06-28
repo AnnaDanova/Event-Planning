@@ -1,9 +1,9 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { NotificationService } from '../../../core/services/notification.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationResponse } from '../../../core/models/notification.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-notification-list',
@@ -14,7 +14,7 @@ import { NotificationResponse } from '../../../core/models/notification.model';
 export class NotificationList implements OnInit {
 
   notifications = signal<NotificationResponse[]>([]);
-  errorMessage = '';
+  errorMessage = signal('');
   showAll = false;
 
   constructor(
@@ -34,7 +34,7 @@ export class NotificationList implements OnInit {
     const loggedUser = this.authService.getLoggedUser();
 
     if (!loggedUser) {
-      this.errorMessage = 'You must be logged in to view notifications.';
+      this.errorMessage.set('You must be logged in to view notifications.');
       return;
     }
 
@@ -45,7 +45,7 @@ export class NotificationList implements OnInit {
       },
       error: (err) => {
         console.log('UNREAD NOTIFICATIONS ERROR:', err);
-        this.errorMessage = 'Could not load unread notifications.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -54,7 +54,7 @@ export class NotificationList implements OnInit {
     const loggedUser = this.authService.getLoggedUser();
 
     if (!loggedUser) {
-      this.errorMessage = 'You must be logged in to view notifications.';
+      this.errorMessage.set('You must be logged in to view notifications.');
       return;
     }
 
@@ -65,7 +65,7 @@ export class NotificationList implements OnInit {
       },
       error: (err) => {
         console.log('ALL NOTIFICATIONS ERROR:', err);
-        this.errorMessage = 'Could not load notifications.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -97,6 +97,7 @@ export class NotificationList implements OnInit {
       },
       error: (err) => {
         console.log('MARK AS READ ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -123,6 +124,7 @@ export class NotificationList implements OnInit {
       },
       error: (err) => {
         console.log('MARK ALL AS READ ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

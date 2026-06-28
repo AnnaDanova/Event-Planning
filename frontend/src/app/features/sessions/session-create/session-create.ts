@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { SessionService } from '../../../core/services/session.service';
 import { SessionCreateRequest } from '../../../core/models/session.model';
 import { UserResponse } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-session-create',
@@ -28,7 +28,7 @@ export class SessionCreate {
     endTime: ''
   };
 
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(
     private route: ActivatedRoute,
@@ -43,7 +43,7 @@ export class SessionCreate {
   createSession(): void {
     const user = this.authService.getLoggedUser();
     if (!user) {
-      this.errorMessage = 'Трябва да сте вписани.';
+      this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
     this.sessionService.createSession(this.eventId, user.id, this.sessionData).subscribe({
@@ -52,7 +52,7 @@ export class SessionCreate {
       },
       error: (err) => {
         console.log('CREATE SESSION ERROR:', err);
-        this.errorMessage = 'Само организаторът може да създава сесии.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -60,7 +60,7 @@ export class SessionCreate {
   private addSpeakers(sessionId: number): void {
     const user = this.authService.getLoggedUser();
     if (!user) {
-      this.errorMessage = 'Трябва да сте вписани.';
+      this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
     const speakers = this.selectedSpeakers();
@@ -79,7 +79,7 @@ export class SessionCreate {
         },
         error: (err) => {
           console.log('ADD SPEAKER ERROR:', err);
-          this.errorMessage = 'Сесията е създадена, но един или повече лектори не можаха да бъдат добавени.';
+          this.errorMessage.set(getErrorMessage(err));
         }
       });
     });
@@ -87,18 +87,17 @@ export class SessionCreate {
 
   searchSpeakers(): void {
     const query = this.speakerSearch.trim();
-
     if (query.length < 2) {
       this.speakerResults.set([]);
       return;
     }
-
     this.userService.searchUsers(query).subscribe({
       next: (users) => {
         this.speakerResults.set(users);
       },
       error: (err) => {
         console.log('SEARCH SPEAKERS ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

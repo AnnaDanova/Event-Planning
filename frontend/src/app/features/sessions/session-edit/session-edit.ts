@@ -1,13 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { SessionService } from '../../../core/services/session.service';
 import { SessionCreateRequest, SessionMaterialResponse } from '../../../core/models/session.model';
 import { UserService } from '../../../core/services/user.service';
 import { UserResponse } from '../../../core/models/user.model';
 import { SpeakerResponse } from '../../../core/models/speaker.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-session-edit',
@@ -29,7 +29,7 @@ export class SessionEdit implements OnInit {
     startTime: '',
     endTime: ''
   });
-  errorMessage = '';
+  errorMessage = signal('');
   loggedUser!: UserResponse | null;
   organizerId: number | null = null;
 
@@ -63,7 +63,7 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('LOAD SESSION ERROR:', err);
-        this.errorMessage = 'Could not load session.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -75,7 +75,7 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('LOAD SPEAKERS ERROR:', err);
-        this.errorMessage = 'Could not load speakers.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -86,6 +86,7 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('LOAD MATERIALS ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -102,13 +103,14 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('SEARCH SPEAKERS ERROR:', err);
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
 
   addSpeaker(user: UserResponse): void {
     if (!this.loggedUser) {
-      this.errorMessage = 'Трябва да сте вписани.';
+      this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
     const alreadyAdded = this.currentSpeakers().some(speaker => speaker.id === user.id);
@@ -132,14 +134,14 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('ADD SPEAKER ERROR:', err);
-        this.errorMessage = 'Нямате право да добавяте лектори.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
 
   removeSpeaker(speakerId: number): void {
     if (!this.loggedUser) {
-      this.errorMessage = 'Трябва да сте вписани.';
+      this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
     this.sessionService.removeSpeakerFromSession(this.eventId, this.sessionId, speakerId, this.loggedUser.id).subscribe({
@@ -150,14 +152,14 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('REMOVE SPEAKER ERROR:', err);
-        this.errorMessage = 'Нямате право да премахвате лектори.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
 
   updateSession(): void {
     if (!this.loggedUser) {
-      this.errorMessage = 'Трябва да сте вписани.';
+      this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
     this.sessionService.updateSession(this.eventId, this.sessionId, this.loggedUser.id, this.sessionData()).subscribe({
@@ -166,7 +168,7 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('UPDATE SESSION ERROR:', err);
-        this.errorMessage = 'Нямате право да редактирате тази сесия.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -195,18 +197,18 @@ export class SessionEdit implements OnInit {
 
   uploadMaterial(): void {
     if (!this.selectedMaterial) {
-      this.errorMessage = 'Моля, изберете файл.';
+      this.errorMessage.set('Моля, изберете файл.');
       return;
     }
     this.sessionService.uploadSessionMaterial(this.eventId, this.sessionId, this.selectedMaterial).subscribe({
       next: (material) => {
         this.materials.update(materials => [...materials, material]);
         this.selectedMaterial = null;
-        this.errorMessage = '';
+        this.errorMessage.set('');
       },
       error: (err) => {
         console.log('UPLOAD MATERIAL ERROR:', err);
-        this.errorMessage = 'Файлът не можа да бъде качен.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -220,7 +222,7 @@ export class SessionEdit implements OnInit {
       },
       error: (err) => {
         console.log('DELETE MATERIAL ERROR:', err);
-        this.errorMessage = 'Материалът не можа да бъде изтрит.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

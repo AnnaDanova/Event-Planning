@@ -6,6 +6,7 @@ import { EventDetailsResponse } from '../../../core/models/event.model';
 import { TicketCategoryService } from '../../../core/services/ticket-category.service';
 import { TicketCategoryResponse } from '../../../core/models/ticket-category.model';
 import { TicketService } from '../../../core/services/ticket.service';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-event-details',
@@ -62,8 +63,8 @@ export class EventDetailsComponent implements OnInit {
         this.event.set(event);
         this.isLoading.set(false);
       },
-      error: () => {
-        this.errorMessage.set('Грешка при зареждане на събитието.');
+      error: (err) => {
+        this.errorMessage.set(getErrorMessage(err));
         this.isLoading.set(false);
       }
     });
@@ -74,9 +75,10 @@ export class EventDetailsComponent implements OnInit {
       next: (categories) => {
         this.ticketCategories.set(categories);
       },
-      error: () => {
-        console.error('Грешка при зареждане на категориите.');
-      }
+      error: (err) => {
+          console.error(err);
+          this.errorMessage.set(getErrorMessage(err));
+        }
     });
   }
 
@@ -106,7 +108,7 @@ export class EventDetailsComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage.set('Грешка при закупуване на билет.');
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

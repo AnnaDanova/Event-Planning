@@ -1,8 +1,10 @@
 <section class="page">
   <form class="form-card" (ngSubmit)="login()">
     <h1>Вход</h1>
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
     }
     <div class="form-group">
       <label for="email">Имейл</label>

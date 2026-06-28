@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { NotificationTemplateService } from '../../../core/services/notification-template.service';
 import { NotificationTemplateRequest } from '../../../core/models/notification-template.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-template-create',
@@ -22,7 +22,7 @@ export class TemplateCreate {
     type: 'EVENT_REMINDER'
   };
 
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(
     private route: ActivatedRoute,
@@ -40,7 +40,7 @@ export class TemplateCreate {
       },
       error: (err) => {
         console.log('CREATE TEMPLATE ERROR:', err);
-        this.errorMessage = 'Could not create notification template.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

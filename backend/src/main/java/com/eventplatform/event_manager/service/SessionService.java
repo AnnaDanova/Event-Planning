@@ -12,9 +12,11 @@ import com.eventplatform.event_manager.mapper.UserMapper;
 import com.eventplatform.event_manager.repository.SessionMaterialRepository;
 import com.eventplatform.event_manager.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,9 +47,9 @@ public class SessionService {
 
     public Session getSessionEntityById(Long id) {
         Session session = sessionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Сесията с ID " + id + " не беше намерена!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Сесията с ID " + id + " не беше намерена!"));
         if (session.getStatus() == SessionStatus.ARCHIVED) {
-            throw new RuntimeException("Сесията е архивирана!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Сесията е архивирана!");
         }
         return session;
     }
@@ -59,7 +61,7 @@ public class SessionService {
     public SessionResponse createSession(Long eventId, Long userId, SessionCreateRequest request) {
         Event event = eventService.getEventEntityById(eventId);
         if (!isOrganizer(event, userId)) {
-            throw new RuntimeException("Само организаторът може да създава сесии.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Само организаторът може да създава сесии.");
         }
         validateTime(request.getStartTime(), request.getEndTime());
         Session session = new Session();
@@ -68,7 +70,7 @@ public class SessionService {
         session.setDescription(request.getDescription());
         session.setStartTime(request.getStartTime());
         session.setEndTime(request.getEndTime());
-        session.setStatus(SessionStatus.valueOf("CONFIRMED"));
+        session.setStatus(SessionStatus.CONFIRMED);
         return sessionMapper.toResponse(sessionRepository.save(session));
     }
 
@@ -76,7 +78,7 @@ public class SessionService {
         Session session = getSessionEntityById(id);
         boolean allowed = isOrganizer(session.getEvent(), userId) || isSpeaker(session, userId);
         if (!allowed) {
-            throw new RuntimeException("Нямате право да редактирате тази сесия.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Нямате право да редактирате тази сесия.");
         }
         validateTime(request.getStartTime(), request.getEndTime());
         if (request.getTitle() != null) {
@@ -94,7 +96,7 @@ public class SessionService {
     public void deleteSession(Long id, Long userId) {
         Session session = getSessionEntityById(id);
         if (!isOrganizer(session.getEvent(), userId)) {
-            throw new RuntimeException("Само организаторът може да изтрива сесии.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Само организаторът може да изтрива сесии.");
         }
         session.setStatus(SessionStatus.ARCHIVED);
         sessionRepository.save(session);
@@ -117,7 +119,7 @@ public class SessionService {
     public void addSpeakerToSession(Long sessionId, Long speakerId, Long userId) {
         Session session = getSessionEntityById(sessionId);
         if (!isOrganizer(session.getEvent(), userId)) {
-            throw new RuntimeException("Само организаторът може да добавя лектори.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Само организаторът може да добавя лектори.");
         }
         User speaker = userService.getUserEntityById(speakerId);
         session.getSpeakers().add(speaker);
@@ -128,7 +130,7 @@ public class SessionService {
     public void removeSpeakerFromSession(Long sessionId, Long speakerId, Long userId) {
         Session session = getSessionEntityById(sessionId);
         if (!isOrganizer(session.getEvent(), userId)) {
-            throw new RuntimeException("Само организаторът може да премахва лектори.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Само организаторът може да премахва лектори.");
         }
         User speaker = userService.getUserEntityById(speakerId);
         session.getSpeakers().remove(speaker);
@@ -155,10 +157,10 @@ public class SessionService {
 
     private void validateTime(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null) {
-            throw new IllegalArgumentException("Началният и крайният час на сесията са задължителни!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Началният и крайният час на сесията са задължителни!");
         }
         if (!end.isAfter(start)) {
-            throw new IllegalArgumentException("Крайният час на сесията трябва да бъде след началния час!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Крайният час на сесията трябва да бъде след началния час!");
         }
     }
 
@@ -167,11 +169,11 @@ public class SessionService {
         Session session = getSessionEntityById(sessionId);
         String originalFileName = file.getOriginalFilename();
         if (originalFileName == null || originalFileName.isBlank()) {
-            throw new IllegalArgumentException("Невалидно име на файл.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Невалидно име на файл.");
         }
         String lowerFileName = originalFileName.toLowerCase();
         if (!(lowerFileName.endsWith(".pdf") || lowerFileName.endsWith(".ppt") || lowerFileName.endsWith(".pptx") || lowerFileName.endsWith(".docx"))) {
-            throw new IllegalArgumentException("Позволени са само PDF, PPT, PPTX и DOCX файлове.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Позволени са само PDF, PPT, PPTX и DOCX файлове.");
         }
         try {
             String storedFileName = UUID.randomUUID() + "_" + originalFileName;
@@ -187,7 +189,7 @@ public class SessionService {
             SessionMaterial savedMaterial = sessionMaterialRepository.save(material);
             return sessionMaterialMapper.toResponse(savedMaterial);
         } catch (IOException e) {
-            throw new RuntimeException("Файлът не можа да бъде качен.", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Файлът не можа да бъде качен.", e);
         }
     }
 
@@ -202,13 +204,13 @@ public class SessionService {
     @Transactional
     public void deleteMaterial(Long sessionId, Long materialId) {
         SessionMaterial material = sessionMaterialRepository.findByIdAndSessionId(materialId, sessionId)
-                .orElseThrow(() -> new RuntimeException("Material not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Материалът не е намерен."));
         try {
             String relativePath = material.getFileUrl();
             Path filePath = Paths.get(relativePath.replaceFirst("/", ""));
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            throw new RuntimeException("Could not delete file.", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Файлът не можа да бъде изтрит.", e);
         }
         sessionMaterialRepository.delete(material);
     }

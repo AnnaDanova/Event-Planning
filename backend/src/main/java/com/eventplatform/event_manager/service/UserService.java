@@ -8,10 +8,11 @@ import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.dto.UserUpdateRequest;
 import com.eventplatform.event_manager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,9 +32,9 @@ public class UserService {
 
     public User getUserEntityById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Потребителят не е намерен!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Потребителят не е намерен!"));
         if (!user.getActive()) {
-            throw new RuntimeException("Потребителят е деактивиран!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Потребителят е деактивиран!");
         }
         return user;
     }
@@ -45,13 +46,13 @@ public class UserService {
 
     public UserResponse register(UserRegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Потребител с този имейл вече съществува!");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Потребител с този имейл вече съществува!");
         }
         if (registerRequest.getUsername() == null || registerRequest.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("Потребителското име не може да бъде празно!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Потребителското име не може да бъде празно!");
         }
         if (registerRequest.getPassword() == null || registerRequest.getPassword().length() < 6) {
-            throw new IllegalArgumentException("Паролата трябва да бъде поне 6 символа дълга!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Паролата трябва да бъде поне 6 символа дълга!");
         }
         User user = new User();
         user.setUsername(registerRequest.getUsername());
@@ -68,12 +69,12 @@ public class UserService {
 
     public UserResponse login(UserLoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new RuntimeException("Грешен имейл!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Грешен имейл или парола!"));
         if (!user.getActive()) {
-            throw new RuntimeException("Профилът е деактивиран!");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Профилът е деактивиран!");
         }
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("Грешна парола!");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Грешен имейл или парола!");
         }
         return userMapper.toResponse(user);
     }
@@ -128,7 +129,7 @@ public class UserService {
             userRepository.save(user);
             return userMapper.toResponse(user);
         } catch (IOException e) {
-            throw new RuntimeException("Could not upload profile photo.", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Неуспешно качване на снимка.", e);
         }
     }
 }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NotificationTemplateService } from '../../../core/services/notification-template.service';
 import { NotificationTemplateResponse } from '../../../core/models/notification-template.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-template-list',
@@ -14,7 +15,7 @@ export class TemplateList implements OnInit {
 
   templates = signal<NotificationTemplateResponse[]>([]);
   eventId!: number;
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(
     private route: ActivatedRoute,
@@ -30,7 +31,7 @@ export class TemplateList implements OnInit {
       },
       error: (err) => {
         console.log('TEMPLATE LIST ERROR:', err);
-        this.errorMessage = 'Could not load notification templates.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }

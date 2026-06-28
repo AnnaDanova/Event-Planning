@@ -1,11 +1,11 @@
 <section class="page">
   <form class="form-card" (ngSubmit)="updateProfile()">
     <h2>Редактиране на профила</h2>
-    @if (successMessage) {
-      <p class="success-message">{{ successMessage }}</p>
+    @if (successMessage()) {
+      <p class="success-message">{{ successMessage() }}</p>
     }
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
     }
     <div class="form-group">
       <label for="lastName">Фамилия</label>

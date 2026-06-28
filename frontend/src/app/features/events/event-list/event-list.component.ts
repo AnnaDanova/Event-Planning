@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
 import { EventShortResponse } from '../../../core/models/event.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-event-list',
@@ -56,7 +57,7 @@ export class EventListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Грешка при зареждане на събитията:', err);
-        this.errorMessage.set('Неуспешно зареждане на събитията.');
+        this.errorMessage.set(getErrorMessage(err));
         this.isLoading.set(false);
       }
     });

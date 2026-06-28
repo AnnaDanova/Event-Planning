@@ -2,10 +2,10 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-
 import { AuthService } from '../../../core/services/auth.service';
 import { UserService } from '../../../core/services/user.service';
 import {UserResponse, UserUpdateRequest} from '../../../core/models/user.model';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-edit-profile',
@@ -25,9 +25,8 @@ export class EditProfile implements OnInit {
     profilePhoto: ''
   });
 
-
-  errorMessage = '';
-  successMessage = '';
+  errorMessage = signal('');
+  successMessage = signal('');
 
   constructor(
     private authService: AuthService,
@@ -52,8 +51,8 @@ export class EditProfile implements OnInit {
           profilePhoto: user.profilePhoto || ''
         });
       },
-      error: () => {
-        this.errorMessage = 'Could not load profile data.';
+      error: (err) => {
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -70,8 +69,8 @@ export class EditProfile implements OnInit {
           this.finishUpdate(updatedUser);
         }
       },
-      error: () => {
-        this.errorMessage = 'Could not update profile.';
+      error: (err) => {
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -88,19 +87,19 @@ export class EditProfile implements OnInit {
 
   uploadProfilePhoto(): void {
     if (!this.selectedFile || !this.userId) {
-      this.errorMessage = 'Please select a file first.';
+      this.errorMessage.set('Моля, първо изберете файл.');
       return;
     }
     this.userService.uploadProfilePhoto(this.userId, this.selectedFile).subscribe({
       next: (updatedUser) => {
         this.authService.saveLoggedUser(updatedUser);
         this.updateData().profilePhoto = updatedUser.profilePhoto ?? '';
-        this.successMessage = 'Profile photo uploaded successfully.';
+        this.successMessage.set('Профилната снимка е качена успешно.');
         this.selectedFile = null;
       },
       error: (err) => {
         console.log('UPLOAD PROFILE PHOTO ERROR:', err);
-        this.errorMessage = 'Could not upload profile photo.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
@@ -115,13 +114,13 @@ export class EditProfile implements OnInit {
       },
       error: (err) => {
         console.log('UPLOAD PROFILE PHOTO ERROR:', err);
-        this.errorMessage = 'Profile was updated, but photo could not be uploaded.';
+        this.errorMessage.set(getErrorMessage(err));
       }
     });
   }
   private finishUpdate(updatedUser: UserResponse): void {
     this.authService.saveLoggedUser(updatedUser);
-    this.successMessage = 'Profile updated successfully.';
+    this.successMessage.set('Профилът е обновен успешно.');
     this.selectedFile = null;
     this.router.navigate(['/profile']);
   }

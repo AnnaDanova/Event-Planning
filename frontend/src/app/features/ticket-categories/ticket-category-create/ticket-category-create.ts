@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TicketCategoryService } from '../../../core/services/ticket-category.service';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 @Component({
   selector: 'app-ticket-category-create',
@@ -55,7 +56,7 @@ export class TicketCategoryCreateComponent implements OnInit {
         error: (err) => {
           console.error(err);
           this.successMessage.set('');
-          this.errorMessage.set('Грешка при добавяне на категория билет.');
+          this.errorMessage.set(getErrorMessage(err));
         }
       });
   }

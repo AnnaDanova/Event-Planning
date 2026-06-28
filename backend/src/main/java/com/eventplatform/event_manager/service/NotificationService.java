@@ -9,8 +9,10 @@ import com.eventplatform.event_manager.dto.NotificationResponse;
 import com.eventplatform.event_manager.mapper.NotificationMapper;
 import com.eventplatform.event_manager.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +29,7 @@ public class NotificationService {
 
     public Notification getNotificationEntityById(Long notificationId) {
         return notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Известието с ID " + notificationId + " не беше намерено!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Известието с ID " + notificationId + " не беше намерено!"));
     }
 
     @Transactional(readOnly = true)

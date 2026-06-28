@@ -1,8 +1,8 @@
 <section class="page">
   <div class="list-card">
     <h2>Шаблони за известия</h2>
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
     }
     <div class="actions">
       <a class="btn" [routerLink]="['/events', eventId, 'notification-templates', 'create']">

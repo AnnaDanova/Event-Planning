@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
+import { getErrorMessage } from '../../../core/utils/error-message.util';
 
 const userId = Number(localStorage.getItem('userId'));
 
@@ -26,7 +27,7 @@ export class EventCreateComponent {
     organizerId: 1 // TODO: remove organizerId - used for testing or with authservice
   };
 
-  errorMessage = '';
+  errorMessage = signal('');
 
   constructor(
     private eventService: EventService,
@@ -34,7 +35,7 @@ export class EventCreateComponent {
   ) {}
 
   createEvent(): void {
-    this.errorMessage = '';
+    this.errorMessage.set('');
 
     this.eventService.createEvent(this.event).subscribe({
       next: (createdEvent) => {
@@ -49,8 +50,7 @@ export class EventCreateComponent {
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = 'Грешка при създаване на събитие.';
-      }
+        this.errorMessage.set(getErrorMessage(err));      }
     });
   }
 }

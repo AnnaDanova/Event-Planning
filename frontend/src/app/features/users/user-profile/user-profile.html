@@ -1,8 +1,8 @@
 <section class="page">
   <div class="list-card">
     <h2>Моят профил</h2>
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
     }
     @if (user()?.profilePhoto) {
       <div class="item-card">

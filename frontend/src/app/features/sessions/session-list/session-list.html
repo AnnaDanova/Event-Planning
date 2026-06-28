@@ -1,15 +1,15 @@
 <section class="page">
   <div class="list-card">
     <h2>Сесии</h2>
-    @if (errorMessage) {
-      <p class="error-message">{{ errorMessage }}</p>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
     }
     <div class="actions">
     @if (canManageEvent()) {
       <a class="btn" [routerLink]="['/events', eventId, 'sessions', 'create']">Добави нова сесия</a>
     }
     </div>
-    @if (sessions().length === 0 && !errorMessage) {
+    @if (sessions().length === 0 && !errorMessage()) {
       <p>Няма добавени сесии за това събитие.</p>
     }
     <div class="list">
