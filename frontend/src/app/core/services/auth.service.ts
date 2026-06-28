@@ -25,12 +25,27 @@ export class AuthService {
     this.loggedUser.set(user);
   }
 
+  // getLoggedUser(): UserResponse | null {
+  //   const user = localStorage.getItem('loggedUser');
+  //   if (!user) {
+  //     return null;
+  //   }
+  //   return JSON.parse(user);
+  // }
+
   getLoggedUser(): UserResponse | null {
     const user = localStorage.getItem('loggedUser');
+
     if (!user) {
       return null;
     }
-    return JSON.parse(user);
+
+    try {
+      return JSON.parse(user);
+    } catch {
+      localStorage.removeItem('loggedUser');
+      return null;
+    }
   }
 
   logout(): void {

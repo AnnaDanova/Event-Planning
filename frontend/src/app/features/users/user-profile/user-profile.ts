@@ -38,6 +38,8 @@ export class UserProfile implements OnInit {
       error: (err) => {
         console.log('PROFILE ERROR:', err);
         this.errorMessage = 'Could not load user profile.';
+        this.authService.logout();
+        this.router.navigate(['/login']);
       }
     });
   }
