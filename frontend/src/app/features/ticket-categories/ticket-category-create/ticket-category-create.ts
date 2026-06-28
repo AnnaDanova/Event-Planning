@@ -64,6 +64,11 @@ export class TicketCategoryCreateComponent implements OnInit {
   finish(): void {
     if (this.returnTo === 'edit') {
       this.router.navigate(['/events', this.eventId, 'edit']);
+    } else if (this.returnTo === 'session-create') {
+      this.router.navigate(
+        ['/events', this.eventId, 'sessions', 'create'],
+          { queryParams: { returnTo: 'details' } }
+      );
     } else {
       this.router.navigate(['/events', this.eventId]);
     }

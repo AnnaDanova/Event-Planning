@@ -17,6 +17,8 @@ import { getErrorMessage } from '../../../core/utils/error-message.util';
 export class SessionCreate {
 
   eventId: number;
+  returnTo = 'details';
+
   speakerSearch = '';
   speakerResults = signal<UserResponse[]>([]);
   selectedSpeakers = signal<UserResponse[]>([]);
@@ -29,6 +31,7 @@ export class SessionCreate {
   };
 
   errorMessage = signal('');
+  successMessage = signal('');
 
   constructor(
     private route: ActivatedRoute,
@@ -38,14 +41,20 @@ export class SessionCreate {
     private authService: AuthService
   ) {
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
+    this.returnTo = this.route.snapshot.queryParamMap.get('returnTo') ?? 'details';
   }
 
   createSession(): void {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
     const user = this.authService.getLoggedUser();
+
     if (!user) {
       this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
+
     this.sessionService.createSession(this.eventId, user.id, this.sessionData).subscribe({
       next: (createdSession) => {
         this.addSpeakers(createdSession.id);
@@ -59,22 +68,28 @@ export class SessionCreate {
 
   private addSpeakers(sessionId: number): void {
     const user = this.authService.getLoggedUser();
+
     if (!user) {
       this.errorMessage.set('Трябва да сте вписани.');
       return;
     }
+
     const speakers = this.selectedSpeakers();
+
     if (speakers.length === 0) {
-      this.router.navigate(['/events', this.eventId, 'sessions']);
+      this.afterSessionCreated();
       return;
     }
+
     let completed = 0;
+
     speakers.forEach(speaker => {
       this.sessionService.addSpeakerToSession(this.eventId, sessionId, speaker.id, user.id).subscribe({
         next: () => {
           completed++;
+
           if (completed === speakers.length) {
-            this.router.navigate(['/events', this.eventId, 'sessions']);
+            this.afterSessionCreated();
           }
         },
         error: (err) => {
@@ -85,12 +100,37 @@ export class SessionCreate {
     });
   }
 
+  private afterSessionCreated(): void {
+    this.successMessage.set('Сесията е добавена успешно.');
+
+    this.sessionData = {
+      title: '',
+      description: '',
+      startTime: '',
+      endTime: ''
+    };
+
+    this.selectedSpeakers.set([]);
+    this.speakerSearch = '';
+    this.speakerResults.set([]);
+  }
+
+  finish(): void {
+    if (this.returnTo === 'edit') {
+      this.router.navigate(['/events', this.eventId, 'edit']);
+    } else {
+      this.router.navigate(['/events', this.eventId], { queryParams:{from: 'create'} });
+    }
+  }
+
   searchSpeakers(): void {
     const query = this.speakerSearch.trim();
+
     if (query.length < 2) {
       this.speakerResults.set([]);
       return;
     }
+
     this.userService.searchUsers(query).subscribe({
       next: (users) => {
         this.speakerResults.set(users);
