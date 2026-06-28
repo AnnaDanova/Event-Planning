@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
 import { getErrorMessage } from '../../../core/utils/error-message.util';
-
-const userId = Number(localStorage.getItem('userId'));
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-event-create',
@@ -14,6 +13,7 @@ const userId = Number(localStorage.getItem('userId'));
   templateUrl: './event-create.html',
   styleUrls: ['./event-create.css']
 })
+
 export class EventCreateComponent {
   event = {
     title: '',
@@ -24,19 +24,25 @@ export class EventCreateComponent {
     startTime: '',
     endTime: '',
     status: 'CONFIRMED',
-    organizerId: 1 // TODO: remove organizerId - used for testing or with authservice
+    organizerId: 0
   };
 
   errorMessage = signal('');
 
   constructor(
     private eventService: EventService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   createEvent(): void {
     this.errorMessage.set('');
-
+    const loggedUser = this.authService.loggedUser();
+    if (!loggedUser) {
+      this.errorMessage.set('Трябва да сте вписани.');
+      return;
+    }
+    this.event.organizerId = loggedUser.id;
     this.eventService.createEvent(this.event).subscribe({
       next: (createdEvent) => {
         this.router.navigate(

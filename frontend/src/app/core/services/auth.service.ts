@@ -35,7 +35,6 @@ export class AuthService {
 
   getLoggedUser(): UserResponse | null {
     const user = localStorage.getItem('loggedUser');
-
     if (!user) {
       return null;
     }
