@@ -44,7 +44,7 @@ export class EventDetailsComponent implements OnInit {
     if (!loggedUser || !event) {
       return false;
     }
-    return loggedUser.email === event.organizerEmail;
+    return loggedUser.email === this.event()!.organizerEmail;
   }
 
   ngOnInit(): void {
