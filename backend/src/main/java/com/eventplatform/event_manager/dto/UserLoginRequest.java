@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UserLoginRequest {
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be a valid email address")
+    @NotBlank(message = "Имейлът е задължителен!")
+    @Email(message = "Имейлът трябжа да е валиден имейл адрес!")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "Паролата е задължителна!")
     private String password;
 }

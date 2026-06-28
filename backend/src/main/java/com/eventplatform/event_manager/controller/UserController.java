@@ -3,6 +3,7 @@ package com.eventplatform.event_manager.controller;
 import com.eventplatform.event_manager.dto.*;
 import com.eventplatform.event_manager.service.SessionService;
 import com.eventplatform.event_manager.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,12 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> registerUser(@RequestBody UserRegisterRequest registerRequest) {
+    public ResponseEntity<UserResponse> registerUser( @Valid @RequestBody UserRegisterRequest registerRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(registerRequest));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> loginUser(@RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity<UserResponse> loginUser(@Valid @RequestBody UserLoginRequest loginRequest) {
         return ResponseEntity.ok(userService.login(loginRequest));
     }
 
