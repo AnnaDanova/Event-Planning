@@ -164,7 +164,7 @@ export class SessionEdit implements OnInit {
     }
     this.sessionService.updateSession(this.eventId, this.sessionId, this.loggedUser.id, this.sessionData()).subscribe({
       next: () => {
-        this.router.navigate(['/events', this.eventId, 'sessions']);
+        this.router.navigate(['/events', this.eventId, 'edit']);
       },
       error: (err) => {
         console.log('UPDATE SESSION ERROR:', err);

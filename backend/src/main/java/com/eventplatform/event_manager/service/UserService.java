@@ -8,10 +8,11 @@ import com.eventplatform.event_manager.dto.UserResponse;
 import com.eventplatform.event_manager.dto.UserUpdateRequest;
 import com.eventplatform.event_manager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
