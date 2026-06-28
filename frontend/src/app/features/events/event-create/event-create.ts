@@ -48,9 +48,7 @@ export class EventCreateComponent {
         this.router.navigate(
           ['/events', createdEvent.id, 'ticket-categories', 'create'],
           {
-            queryParams: {
-              returnTo: 'details'
-            }
+            queryParams: { returnTo: 'session-create' }
           }
         );
       },
