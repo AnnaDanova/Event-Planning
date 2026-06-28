@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,12 +17,12 @@ export class TicketCategoryCreateComponent implements OnInit {
 
   category = {
     name: '',
-    quantity: 0,
+    quantity: 1,
     price: 0
   };
 
-  errorMessage = '';
-  successMessage = '';
+  errorMessage = signal('');
+  successMessage = signal('');
   returnTo = 'details';
 
   constructor(
@@ -33,39 +33,38 @@ export class TicketCategoryCreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
-
-    this.returnTo =
-      this.route.snapshot.queryParamMap.get('returnTo') ?? 'details';
+    this.returnTo = this.route.snapshot.queryParamMap.get('returnTo') ?? 'details';
   }
 
   createCategory(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
+    this.errorMessage.set('');
+    this.successMessage.set('');
 
-    this.ticketCategoryService.createCategory(this.eventId, this.category).subscribe({
-      next: () => {
-        this.successMessage = 'Категорията е добавена успешно. Можеш да добавиш още една.';
+    this.ticketCategoryService.createCategory(this.eventId, this.category)
+      .subscribe({
+        next: () => {
+          this.successMessage.set('Категорията е добавена успешно.');
+          this.errorMessage.set('');
 
-        this.category = {
-          name: '',
-          quantity: 0,
-          price: 0
-        };
-      },
-      error: (err) => {
-        console.error(err);
-        this.errorMessage = 'Грешка при добавяне на категория билет.';
-      }
-    });
+          this.category = {
+            name: '',
+            quantity: 1,
+            price: 0
+          };
+        },
+        error: (err) => {
+          console.error(err);
+          this.successMessage.set('');
+          this.errorMessage.set('Грешка при добавяне на категория билет.');
+        }
+      });
   }
 
   finish(): void {
-
     if (this.returnTo === 'edit') {
       this.router.navigate(['/events', this.eventId, 'edit']);
     } else {
       this.router.navigate(['/events', this.eventId]);
     }
-
   }
 }

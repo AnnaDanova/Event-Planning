@@ -1,15 +1,15 @@
 <div class="container mt-5">
   <h2 class="mb-4">Добави категория билети</h2>
 
-  @if (successMessage) {
+  @if (successMessage()) {
     <div class="alert alert-success">
-      {{ successMessage }}
+      {{ successMessage() }}
     </div>
   }
 
-  @if (errorMessage) {
+  @if (errorMessage()) {
     <div class="alert alert-danger">
-      {{ errorMessage }}
+      {{ errorMessage() }}
     </div>
   }
 
