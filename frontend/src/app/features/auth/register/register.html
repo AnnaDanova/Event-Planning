@@ -1,0 +1,43 @@
+<section class="page">
+  <form class="form-card" (ngSubmit)="register()">
+    <h1>Създаване на профил</h1>
+    @if (successMessage()) {
+      <p class="success-message">{{ successMessage() }}</p>
+    }
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+    <div class="form-group">
+      <label for="username">Потребителско име</label>
+      <input id="username" name="username" type="text" [(ngModel)]="registerData.username" required />
+    </div>
+    <div class="form-group">
+      <label for="firstName">Име</label>
+      <input id="firstName" name="firstName" type="text" [(ngModel)]="registerData.firstName" required />
+    </div>
+    <div class="form-group">
+      <label for="lastName">Фамилия</label>
+      <input id="lastName" name="lastName" type="text" [(ngModel)]="registerData.lastName" required />
+    </div>
+    <div class="form-group">
+      <label for="bio">Описание / За мен</label>
+      <textarea id="bio" name="bio" rows="4" [(ngModel)]="registerData.bio"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="email">Имейл</label>
+      <input id="email" name="email" type="email" [(ngModel)]="registerData.email" required />
+    </div>
+    <div class="form-group">
+      <label for="password">Парола</label>
+      <input id="password" name="password" type="password" [(ngModel)]="registerData.password" required />
+    </div>
+    <div class="form-group">
+      <label for="address">Населено място</label>
+      <input id="address" name="address" type="text" [(ngModel)]="registerData.address" />
+    </div>
+    <div class="actions">
+      <button type="submit">Регистрация</button>
+      <a routerLink="/login" class="btn btn-secondary">Вход</a>
+    </div>
+  </form>
+</section>

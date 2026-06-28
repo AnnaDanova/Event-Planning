@@ -1,12 +1,11 @@
 package com.eventplatform.event_manager.controller;
-import com.eventplatform.event_manager.dto.SessionCreateRequest;
-import com.eventplatform.event_manager.dto.SessionResponse;
-import com.eventplatform.event_manager.dto.UserResponse;
+import com.eventplatform.event_manager.dto.*;
 import com.eventplatform.event_manager.service.SessionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,8 +21,8 @@ public class SessionController {
     }
 
     @PostMapping
-    public ResponseEntity<SessionResponse> createSession(@PathVariable Long eventId, @Valid @RequestBody SessionCreateRequest req) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.createSession(eventId, req));
+    public ResponseEntity<SessionResponse> createSession(@PathVariable Long eventId, @RequestParam Long userId, @Valid @RequestBody SessionCreateRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(sessionService.createSession(eventId, userId, req));
     }
 
     @GetMapping
@@ -37,30 +36,46 @@ public class SessionController {
     }
 
     @PutMapping("/{sessionId}")
-    public ResponseEntity<SessionResponse> updateSession(@PathVariable Long sessionId, @Valid @RequestBody SessionCreateRequest req) {
-        return ResponseEntity.ok(sessionService.updateSession(sessionId, req));
+    public ResponseEntity<SessionResponse> updateSession(@PathVariable Long sessionId, @RequestParam Long userId, @Valid @RequestBody SessionCreateRequest req) {
+        return ResponseEntity.ok(sessionService.updateSession(sessionId, userId, req));
     }
 
     @DeleteMapping("/{sessionId}")
-    public ResponseEntity<Void> deleteSession(@PathVariable Long sessionId) {
-        sessionService.deleteSession(sessionId);
+    public ResponseEntity<Void> deleteSession(@PathVariable Long sessionId, @RequestParam Long userId) {
+        sessionService.deleteSession(sessionId, userId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{sessionId}/speakers")
-    public ResponseEntity<Void> addSpeakerToSession(@PathVariable Long sessionId, @RequestBody Long speakerId) {
-        sessionService.addSpeakerToSession(sessionId, speakerId);
+    public ResponseEntity<Void> addSpeakerToSession(@PathVariable Long sessionId, @RequestParam Long userId, @RequestBody Long speakerId) {
+        sessionService.addSpeakerToSession(sessionId, speakerId, userId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{sessionId}/speakers")
-    public ResponseEntity<List<UserResponse>> getSessionSpeakers(@PathVariable Long sessionId) {
+    public ResponseEntity<List<SpeakerResponse>> getSessionSpeakers(@PathVariable Long sessionId) {
         return ResponseEntity.ok(sessionService.getSpeakersBySessionId(sessionId));
     }
 
     @DeleteMapping("/{sessionId}/speakers/{speakerId}")
-    public ResponseEntity<Void> removeSpeakerFromSession(@PathVariable Long sessionId, @PathVariable Long speakerId) {
-        sessionService.removeSpeakerFromSession(sessionId, speakerId);
+    public ResponseEntity<Void> removeSpeakerFromSession(@PathVariable Long sessionId, @RequestParam Long userId, @PathVariable Long speakerId) {
+        sessionService.removeSpeakerFromSession(sessionId, speakerId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{sessionId}/materials")
+    public ResponseEntity<SessionMaterialResponse> uploadSessionMaterial(@PathVariable Long sessionId, @RequestParam("file") MultipartFile file) {
+        return ResponseEntity.ok(sessionService.uploadSessionMaterial(sessionId, file));
+    }
+
+    @GetMapping("/{sessionId}/materials")
+    public ResponseEntity<List<SessionMaterialResponse>> getSessionMaterials(@PathVariable Long sessionId) {
+        return ResponseEntity.ok(sessionService.getSessionMaterials(sessionId));
+    }
+
+    @DeleteMapping("/{sessionId}/materials/{materialId}")
+    public ResponseEntity<Void> deleteMaterial(@PathVariable Long sessionId, @PathVariable Long materialId) {
+        sessionService.deleteMaterial(sessionId, materialId);
         return ResponseEntity.noContent().build();
     }
 }

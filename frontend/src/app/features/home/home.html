@@ -1,0 +1,33 @@
+<div class="page">
+  <div class="list-card">
+    <h1>Открий следващото събитие, на което да отидеш</h1>
+    <p>
+      Намери концерти, обучения, конференции, спортни събития и много други.
+    </p>
+    <form (ngSubmit)="searchEvents()">
+      <div class="form-group">
+        <label>Ключова дума</label>
+        <input type="text" name="keyword" [(ngModel)]="keyword" placeholder="Напр. концерт">
+      </div>
+      <div class="form-group">
+        <label>Локация</label>
+        <input type="text" name="location" [(ngModel)]="location" placeholder="Напр. София">
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn">Търси</button>
+        <a routerLink="/events" class="btn">Виж всички</a>
+      </div>
+    </form>
+  </div>
+  <div class="list-card">
+    <h2>Разгледай по категория</h2>
+    <div class="list">
+      <a class="item-card" [routerLink]="['/events']" [queryParams]="{ category: 'CONFERENCE' }">Конференция</a>
+      <a class="item-card" [routerLink]="['/events']" [queryParams]="{ category: 'CONCERT' }">Концерт</a>
+      <a class="item-card" [routerLink]="['/events']" [queryParams]="{ category: 'WORKSHOP' }">Уъркшоп</a>
+      <a class="item-card" [routerLink]="['/events']" [queryParams]="{ category: 'FESTIVAL' }">Фестивал</a>
+      <a class="item-card" [routerLink]="['/events']" [queryParams]="{ category: 'SPORTS' }">Спорт</a>
+      <a class="item-card" [routerLink]="['/events']" [queryParams]="{ category: 'SEMINAR' }">Семинар</a>
+    </div>
+  </div>
+</div>

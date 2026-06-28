@@ -15,7 +15,8 @@ public class EventDetailsResponse {
     private String title;
     private String description;
     private String venue;
-    private LocalDateTime dateTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private String category;
     private EventStatus status;
     private String organizerName;

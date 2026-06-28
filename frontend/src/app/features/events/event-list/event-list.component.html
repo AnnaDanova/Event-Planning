@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="list-card">
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h2>Предстоящи събития</h2>
+
+      <a routerLink="/events/create" class="btn">
+        + Създай събитие
+      </a>
+    </div>
+
+    @if (hasFilters()) {
+      <div class="item-card">
+        <p><strong>Активни филтри:</strong></p>
+
+        @if (category()) {
+          <p>Категория: {{ category() }}</p>
+        }
+
+        @if (location()) {
+          <p>Локация: {{ location() }}</p>
+        }
+
+        @if (keyword()) {
+          <p>Ключова дума: {{ keyword() }}</p>
+        }
+
+        <div class="actions">
+          <button type="button" (click)="clearFilters()">
+            Изчисти филтрите
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <p>Зареждане на събития...</p>
+    }
+
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+
+    @if (!isLoading() && !errorMessage()) {
+      @if (events().length === 0) {
+        <p>Няма намерени събития.</p>
+      } @else {
+        <div class="list">
+          @for (event of events(); track event.id) {
+            <div class="item-card">
+              <p><strong>{{ event.category }}</strong></p>
+
+              <h3>{{ event.title }}</h3>
+
+              <p><strong>Локация:</strong> {{ event.venue }}</p>
+
+              <p>
+                <strong>Дата:</strong>
+                {{ event.startTime | date:'dd.MM.yyyy, HH:mm' }}
+              </p>
+
+              <p>
+                @if (event.lowestPrice != null) {
+                  От {{ event.lowestPrice | currency:'EUR':'symbol':'1.2-2' }}
+                } @else {
+                  Все още няма публикувани билети
+                }
+              </p>
+
+              <div class="actions">
+                <a [routerLink]="['/events', event.id]" class="btn">
+                  Детайли
+                </a>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+  </div>
+</div>

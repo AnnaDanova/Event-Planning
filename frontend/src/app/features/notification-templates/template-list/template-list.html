@@ -1,0 +1,29 @@
+<section class="page">
+  <div class="list-card">
+    <h2>Шаблони за известия</h2>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+    <div class="actions">
+      <a class="btn" [routerLink]="['/events', eventId, 'notification-templates', 'create']">
+        Създаване на нов шаблон
+      </a>
+    </div>
+    @if (templates().length === 0) {
+      <p>Все още няма създадени шаблони за това събитие.</p>
+    }
+    <div class="list">
+      @for (template of templates(); track template.id) {
+        <div class="item-card">
+          <p><strong>Съобщение:</strong> {{ template.message }}</p>
+          <p><strong>Тип:</strong> {{ template.type }}</p>
+          <p><strong>Насрочено за:</strong> {{ template.scheduledAt | date:'dd.MM.yyyy, HH:mm' }}</p>
+          @if (template.sessionId) {
+            <p><strong>Сесия:</strong> {{ template.sessionTitle }}</p>
+          }
+          <p><strong>Събитие:</strong> {{ template.eventTitle }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>

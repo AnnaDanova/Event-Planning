@@ -4,12 +4,15 @@ import com.eventplatform.event_manager.domain.Notification;
 import com.eventplatform.event_manager.domain.NotificationTemplate;
 import com.eventplatform.event_manager.domain.User;
 import com.eventplatform.event_manager.domain.enums.NotificationStatus;
+import com.eventplatform.event_manager.domain.enums.NotificationType;
 import com.eventplatform.event_manager.dto.NotificationResponse;
 import com.eventplatform.event_manager.mapper.NotificationMapper;
 import com.eventplatform.event_manager.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +29,7 @@ public class NotificationService {
 
     public Notification getNotificationEntityById(Long notificationId) {
         return notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Известието с ID " + notificationId + " не беше намерено!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Известието с ID " + notificationId + " не беше намерено!"));
     }
 
     @Transactional(readOnly = true)
@@ -74,4 +77,41 @@ public class NotificationService {
         notification.setStatus(NotificationStatus.SENT);
         return notificationMapper.toResponse(notificationRepository.save(notification));
     }
+
+    @Transactional
+    public NotificationResponse sendTicketConfirmedNotification(Long userId, Long eventId) {
+        User user = userService.getUserEntityById(userId);
+        NotificationTemplate template = templateService.createInstantTemplate(eventId, null, "Успешно се записахте за събитието!", com.eventplatform.event_manager.domain.enums.NotificationType.TICKET_CONFIRMED);
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setTemplate(template);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setStatus(NotificationStatus.SENT);
+        return notificationMapper.toResponse(notificationRepository.save(notification));
+    }
+
+    @Transactional
+    public NotificationResponse sendSpeakerAssignedNotification(Long speakerId, Long eventId, Long sessionId) {
+        User speaker = userService.getUserEntityById(speakerId);
+        NotificationTemplate template = templateService.createInstantTemplate(eventId, sessionId, "Добавени сте към събитие.", com.eventplatform.event_manager.domain.enums.NotificationType.SPEAKER_BRIEFING);
+        Notification notification = new Notification();
+        notification.setUser(speaker);
+        notification.setTemplate(template);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setStatus(NotificationStatus.SENT);
+        return notificationMapper.toResponse(notificationRepository.save(notification));
+    }
+
+    @Transactional
+    public NotificationResponse sendSessionCancelledNotification(Long speakerId, Long eventId, Long sessionId) {
+        User speaker = userService.getUserEntityById(speakerId);
+        NotificationTemplate template = templateService.createInstantTemplate(eventId, sessionId, "Сесията, към която сте добавени като лектор, беше отменена от организатора.", NotificationType.SCHEDULE_CHANGED);
+        Notification notification = new Notification();
+        notification.setUser(speaker);
+        notification.setTemplate(template);
+        notification.setSentAt(LocalDateTime.now());
+        notification.setStatus(NotificationStatus.SENT);
+        return notificationMapper.toResponse(notificationRepository.save(notification));
+    }
+
 }

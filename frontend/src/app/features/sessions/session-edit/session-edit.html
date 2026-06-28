@@ -1,0 +1,103 @@
+@if (!loggedUser) {
+    <section class="page">
+        <div class="form-card">
+            <h2>Трябва да сте вписани, за да редактирате сесия.</h2>
+            <a class="btn btn-secondary" [routerLink]="['/events', eventId, 'sessions']">Назад</a>
+        </div>
+    </section>
+} @else {
+    <section class="page">
+  <form class="form-card" (ngSubmit)="updateSession()">
+    <h2>Редактиране на сесия</h2>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+    <div class="form-group">
+      <label>Тема</label>
+      <input type="text" name="title" [ngModel]="sessionData().title" (ngModelChange)="updateField('title', $event)" required>
+    </div>
+    <div class="form-group">
+      <label>Описание</label>
+      <textarea name="description" [ngModel]="sessionData().description" (ngModelChange)="updateField('description', $event)" required></textarea>
+    </div>
+    <div class="form-group">
+      <label>Начален час</label>
+      <input type="datetime-local" name="startTime" [ngModel]="sessionData().startTime" (ngModelChange)="updateField('startTime', $event)" required>
+    </div>
+    <div class="form-group">
+      <label>Краен час</label>
+      <input type="datetime-local" name="endTime" [ngModel]="sessionData().endTime" (ngModelChange)="updateField('endTime', $event)" required>
+    </div>
+    <h3>Материали към сесията</h3>
+    @if (isOrganizer() || isSpeaker()){
+        <div class="form-group">
+            <input type="file" accept=".pdf,.ppt,.pptx,.docx" (change)="onMaterialSelected($event)">
+        </div>
+        <div class="actions">
+            <button type="button" (click)="uploadMaterial()">Качи материал</button>
+        </div>
+    }
+    @if (materials().length === 0) {
+      <p>Няма качени материали.</p>
+    } @else {
+      <div class="list">
+        @for (material of materials(); track material.id) {
+          <div class="item-card">
+            <a [href]="'http://localhost:8080' + material.fileUrl" target="_blank">
+              {{ material.fileName }}
+            </a>
+            @if (isOrganizer() || isSpeaker()){
+                <div class="actions">
+                    <button type="button" (click)="deleteMaterial(material.id)">Изтрий</button>
+                </div>
+            }
+          </div>
+        }
+      </div>
+    }
+    <h3>Лектори</h3>
+    @if (isOrganizer()){
+        <div class="form-group">
+            <label for="speakerSearch">Добави лектор</label>
+            <input id="speakerSearch" name="speakerSearch" type="text" [(ngModel)]="speakerSearch" (input)="searchSpeakers()" placeholder="Търси по име или имейл">
+        </div>
+        @if (speakerResults().length > 0) {
+            <div class="list">
+            @for (user of speakerResults(); track user.id) {
+                <div class="item-card">
+                    {{ user.firstName }} {{ user.lastName }} - {{ user.email }}
+                <div class="actions">
+                    <button type="button" (click)="addSpeaker(user)">Добави</button>
+                </div>
+            </div>
+            }
+        </div>
+        }
+    }
+    <h3>Добавени лектори</h3>
+    @if (currentSpeakers().length === 0) {
+      <p>Няма добавени лектори.</p>
+    } @else {
+      <div class="list">
+        @for (speaker of currentSpeakers(); track speaker.id) {
+          <div class="item-card">
+            {{ speaker.fullName }}
+            @if (speaker.bio) {
+              <span> - {{ speaker.bio }}</span>
+            }
+            @if (isOrganizer()){
+                <div class="actions">
+                    <button type="button" (click)="removeSpeaker(speaker.id)">Премахни</button>
+                </div>
+            }
+          </div>
+        }
+      </div>
+    }
+    <div class="actions">
+      <button type="submit">Запази промените</button>
+      <a class="btn btn-secondary" [routerLink]="['/events', eventId, 'edit']">Назад</a>
+    </div>
+  </form>
+</section>
+}

@@ -1,0 +1,25 @@
+<nav class="navbar">
+  <div>
+    <h2>Evently</h2>
+  </div>
+  <div class="links">
+    <a routerLink="/">Начало</a>
+    <a routerLink="/events">Събития</a>
+    <a routerLink="/events/create"> Създай събитие </a>
+    @if (authService.loggedUser()) {
+      <div class="dropdown">
+        <button type="button" class="dropdown-btn"> Меню </button>
+        <div class="dropdown-content">
+          <a routerLink="/my-events">Моите събития</a>
+          <a routerLink="/my-sessions">Моите сесии</a>
+          <a routerLink="/notifications">Известия</a>
+          <a routerLink="/profile">Профил</a>
+          <button type="button" class="logout-btn" (click)="logout()">Изход</button>
+        </div>
+      </div>
+    } @else {
+      <a routerLink="/login">Вход</a>
+      <a routerLink="/register">Регистрация</a>
+    }
+  </div>
+</nav>

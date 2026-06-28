@@ -1,0 +1,57 @@
+<section class="page">
+  <div class="list-card">
+    <h2>Сесии</h2>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+    <div class="actions">
+    @if (canManageEvent()) {
+      <a class="btn" [routerLink]="['/events', eventId, 'sessions', 'create']">Добави нова сесия</a>
+    }
+    </div>
+    @if (sessions().length === 0 && !errorMessage()) {
+      <p>Няма добавени сесии за това събитие.</p>
+    }
+    <div class="list">
+      @for (session of sessions(); track session.id) {
+        <div class="item-card">
+          <h3>Тема: {{ session.title }}</h3>
+          <p><strong>Описание:</strong> {{ session.description }}</p>
+          <p><strong>Начало:</strong> {{ session.startTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+          <p><strong>Край:</strong> {{ session.endTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+          <p><strong>Статус:</strong> {{ session.status }}</p>
+          @if (session.materials && session.materials.length > 0) {
+            <p><strong>Материали:</strong></p>
+            <div class="list">
+              @for (material of session.materials; track material.id) {
+                <a [href]="'http://localhost:8080' + material.fileUrl" target="_blank">
+                  {{ material.fileName }}
+                </a>
+              }
+            </div>
+          } @else {
+            <p><strong>Материали:</strong> Няма качени материали.</p>
+          }
+          <p><strong>Лектори:</strong></p>
+          @if (!sessionSpeakers()[session.id] || sessionSpeakers()[session.id].length === 0) {
+            <p>Няма добавени лектори.</p>
+          } @else {
+            <div class="list">
+              @for (speaker of sessionSpeakers()[session.id]; track speaker.id) {
+                <span>{{ speaker.fullName }}</span>
+              }
+            </div>
+          }
+          <div class="actions">
+              @if (canEditSession(session)) {
+                  <a class="btn btn-secondary" [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']">Редактиране</a>
+              }
+              @if (canDeleteSession(session)) {
+                  <button type="button" (click)="deleteSession(session.id)">Изтриване</button>
+              }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

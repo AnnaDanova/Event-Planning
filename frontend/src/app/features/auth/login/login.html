@@ -1,0 +1,22 @@
+<section class="page">
+  <form class="form-card" (ngSubmit)="login()">
+    <h1>Вход</h1>
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+    <div class="form-group">
+      <label for="email">Имейл</label>
+      <input id="email" name="email" type="email" [(ngModel)]="loginData.email" required />
+    </div>
+    <div class="form-group">
+      <label for="password">Парола</label>
+      <input id="password" name="password" type="password" [(ngModel)]="loginData.password" required />
+    </div>
+    <div class="actions">
+      <button type="submit">Влез</button>
+      <a routerLink="/register" class="btn btn-secondary">Регистрация</a>
+    </div>
+  </form>
+</section>

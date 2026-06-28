@@ -26,9 +26,11 @@ public class NotificationMapper {
             }
             if (template.getEvent() != null) {
                 response.setEventId(template.getEvent().getId());
+                response.setEventTitle(template.getEvent().getTitle());
             }
             if (template.getSession() != null) {
                 response.setSessionId(template.getSession().getId());
+                response.setSessionTitle(template.getSession().getTitle());
             }
         }
         return response;

@@ -1,6 +1,10 @@
 package com.eventplatform.event_manager.dto;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,5 +18,7 @@ public class NotificationResponse {
     private LocalDateTime sentAt;
     private String type;
     private Long eventId;
+    private String eventTitle;
     private Long sessionId;
+    private String sessionTitle;
 }

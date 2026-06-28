@@ -1,5 +1,6 @@
 package com.eventplatform.event_manager.controller;
 
+import com.eventplatform.event_manager.domain.enums.EventCategory;
 import com.eventplatform.event_manager.dto.*;
 import com.eventplatform.event_manager.service.EventService;
 import jakarta.validation.Valid;
@@ -25,8 +26,8 @@ public class EventController {
         }
 
         @GetMapping
-        public ResponseEntity<List<EventShortResponse>> getAllEvents() {
-            return ResponseEntity.ok(eventService.getAllEvents());
+        public List<EventShortResponse> getEvents(@RequestParam(required = false) EventCategory category, @RequestParam(required = false) String location, @RequestParam(required = false) String keyword) {
+            return eventService.searchEvents(category, location, keyword);
         }
 
         @GetMapping("/{eventId}")
@@ -44,4 +45,13 @@ public class EventController {
             eventService.deleteEvent(eventId);
             return ResponseEntity.noContent().build();
         }
+
+    @GetMapping("/organizer/{organizerId}")
+    public ResponseEntity<List<EventShortResponse>> getEventsByOrganizer(
+            @PathVariable Long organizerId) {
+
+        return ResponseEntity.ok(
+                eventService.getEventsByOrganizer(organizerId)
+        );
     }
+}

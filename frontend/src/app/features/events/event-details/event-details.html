@@ -1,0 +1,126 @@
+<div class="container mt-5">
+
+  @if (isLoading()) {
+    <p>Зареждане...</p>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ successMessage() }}
+      <button type="button" class="btn-close" (click)="successMessage.set('')"></button>
+    </div>
+  }
+
+  @if (event(); as eventDetails) {
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <span class="badge bg-secondary mb-3">
+          {{ eventDetails.category }}
+        </span>
+
+        <h2>{{ eventDetails.title }}</h2>
+
+        <p><strong>Описание:</strong> {{ eventDetails.description }}</p>
+        <p><strong>Локация:</strong> {{ eventDetails.venue }}</p>
+        <p><strong>Начало:</strong> {{ eventDetails.startTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+        <p><strong>Край:</strong> {{ eventDetails.endTime | date:'dd.MM.yyyy, HH:mm' }}</p>
+        <p><strong>Капацитет:</strong> {{ eventDetails.capacity }}</p>
+        <p><strong>Статус:</strong> {{ eventDetails.status }}</p>
+
+        <hr>
+
+        <h4 class="mb-3">Сесии</h4>
+
+        @if (sessions().length === 0) {
+          <p class="text-muted">
+            Все още няма добавени сесии.
+          </p>
+        } @else {
+          <div class="list-group mb-4">
+            @for (session of sessions(); track session.id) {
+              <div class="list-group-item">
+                <h5>{{ session.title }}</h5>
+
+                @if (session.description) {
+                  <p class="mb-1">{{ session.description }}</p>
+                }
+
+                <small class="text-muted">
+                  {{ session.startTime | date:'dd.MM.yyyy, HH:mm' }}
+                  –
+                  {{ session.endTime | date:'dd.MM.yyyy, HH:mm' }}
+                </small>
+              </div>
+            }
+          </div>
+        }
+
+        <hr>
+
+        <h4 class="mb-3">Категории билети</h4>
+
+        @if (ticketCategories().length === 0) {
+          <p class="text-muted">
+            Все още няма добавени категории билети.
+          </p>
+        } @else {
+          <div class="list-group mb-4">
+            @for (category of ticketCategories(); track category.id) {
+              <div class="list-group-item">
+                <h5>{{ category.name }}</h5>
+
+                <p class="mb-1">
+                  <strong>Цена:</strong> {{ category.price }} лв.
+                </p>
+
+                <p class="mb-1">
+                  <strong>Оставащи:</strong> {{ category.quantity }}
+                </p>
+
+                @if (category.quantity === 0) {
+                  <span class="badge bg-danger mt-2">
+                    Изчерпани
+                  </span>
+                } @else if (isOrganizer()) {
+                  <span class="badge bg-info mt-2">
+                    Вие сте организатор на това събитие
+                  </span>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm mt-2"
+                    (click)="buyTicket(category.id)">
+                    Купи билет
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+
+<!--        <a routerLink="/events" class="btn btn-outline-secondary">-->
+<!--          Назад-->
+<!--        </a>-->
+        @if (from === 'create') {
+          <a routerLink="/my-events" class="btn btn-outline-secondary">
+            ← Към моите събития
+          </a>
+        } @else {
+          <a routerLink="/events" class="btn btn-outline-secondary">
+            ← Към всички събития
+          </a>
+        }
+
+
+      </div>
+    </div>
+  }
+
+</div>

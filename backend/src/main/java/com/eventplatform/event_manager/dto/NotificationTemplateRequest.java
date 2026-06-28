@@ -2,6 +2,7 @@ package com.eventplatform.event_manager.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,13 +18,13 @@ import java.time.LocalDateTime;
 public class NotificationTemplateRequest {
     private Long sessionId;
 
-    @NotBlank
+    @NotNull
     private Long eventId;
 
     @NotBlank
     private String message;
 
-    @NotBlank
+    @NotNull
     private LocalDateTime scheduledAt;
 
     private String type;

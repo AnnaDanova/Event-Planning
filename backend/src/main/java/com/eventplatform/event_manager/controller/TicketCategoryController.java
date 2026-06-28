@@ -41,4 +41,13 @@ public class TicketCategoryController {
         ticketCategoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<TicketCategoryResponse> getCategory(
+            @PathVariable Long categoryId) {
+
+        return ResponseEntity.ok(
+                ticketCategoryService.getCategoryById(categoryId)
+        );
+    }
 }

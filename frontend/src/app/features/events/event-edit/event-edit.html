@@ -1,0 +1,200 @@
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Редакция на събитие</h2>
+
+    <a routerLink="/my-events" class="btn btn-outline-secondary">
+      ← Назад
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Зареждане...</p>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">{{ errorMessage() }}</div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+  }
+
+  @if (!isLoading()) {
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="mb-4">Основна информация</h5>
+
+        <form (ngSubmit)="updateEvent()">
+
+          <div class="mb-3">
+            <label class="form-label">Заглавие</label>
+            <input class="form-control" [(ngModel)]="event.title" name="title" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Описание</label>
+            <textarea class="form-control" [(ngModel)]="event.description" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Локация</label>
+              <input class="form-control" [(ngModel)]="event.venue" name="venue" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Категория</label>
+              <select class="form-select" [(ngModel)]="event.category" name="category" required>
+                <option value="CONFERENCE">Conference</option>
+                <option value="CONCERT">Concert</option>
+                <option value="WORKSHOP">Workshop</option>
+                <option value="FESTIVAL">Festival</option>
+                <option value="SPORTS">Sports</option>
+                <option value="SEMINAR">Seminar</option>
+                <option value="OTHERS">Others</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Капацитет</label>
+            <input type="number" class="form-control" [(ngModel)]="event.capacity" name="capacity" required min="1">
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Начало</label>
+              <input type="datetime-local" class="form-control" [(ngModel)]="event.startTime" name="startTime" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Край</label>
+              <input type="datetime-local" class="form-control" [(ngModel)]="event.endTime" name="endTime" required>
+            </div>
+          </div>
+
+<!--          <button type="submit" class="btn btn-primary">-->
+<!--            Запази-->
+<!--          </button>-->
+
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Категории билети</h5>
+
+          <a
+            [routerLink]="['/events', eventId, 'ticket-categories', 'create']"
+            [queryParams]="{ returnTo: 'edit' }"
+            class="btn btn-success btn-sm">
+            + Добави
+          </a>
+        </div>
+
+        @if (ticketCategories().length === 0) {
+          <div class="text-muted">
+            Няма добавени категории.
+          </div>
+        } @else {
+          @for (category of ticketCategories(); track category.id) {
+            <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">{{ category.name }}</div>
+                <small class="text-muted">
+                  {{ category.quantity }} билета · {{ category.price }} лв.
+                </small>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a [routerLink]="['/events', eventId, 'ticket-categories', category.id, 'edit']"
+                  class="btn btn-outline-warning btn-sm">
+                  Редактирай
+                </a>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="deleteCategory(category.id)">
+                  Изтрий
+                </button>
+              </div>
+            </div>
+          }
+        }
+
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-5">
+      <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Сесии</h5>
+
+          <a
+            [routerLink]="['/events', eventId, 'sessions', 'create']"
+            class="btn btn-success btn-sm">
+            + Добави
+          </a>
+        </div>
+
+        @if (sessions().length === 0) {
+          <div class="text-muted">
+            Няма добавени сесии.
+          </div>
+        } @else {
+          @for (session of sessions(); track session.id) {
+            <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">{{ session.title }}</div>
+
+                @if (session.description) {
+                  <small class="text-muted d-block">
+                    {{ session.description }}
+                  </small>
+                }
+
+                <small class="text-muted">
+                  {{ session.startTime | date:'dd.MM.yyyy HH:mm' }}
+                  –
+                  {{ session.endTime | date:'dd.MM.yyyy HH:mm' }}
+                </small>
+              </div>
+
+              <div class="d-flex gap-2">
+                <a
+                  [routerLink]="['/events', eventId, 'sessions', session.id, 'edit']"
+                  class="btn btn-outline-warning btn-sm">
+                  Редактирай
+                </a>
+
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="deleteSession(session.id)">
+                  Изтрий
+                </button>
+              </div>
+            </div>
+          }
+        }
+
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" (click)="updateEvent()">
+      Запази
+    </button>
+
+  }
+
+</div>

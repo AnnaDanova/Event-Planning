@@ -1,0 +1,42 @@
+<section class="page">
+  <div class="list-card">
+    <h2>Моите известия</h2>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+    <div class="actions">
+      <button type="button" (click)="toggleNotificationsView()">
+        {{ showAll ? 'Непрочетени' : 'Всички' }}
+      </button>
+      @if (hasUnreadNotifications()) {
+        <button type="button" (click)="markAllAsRead()">
+          Отбележи всички като прочетени
+        </button>
+      }
+    </div>
+    @if (notifications().length === 0 && !errorMessage()) {
+      <p>{{ showAll ? 'Няма налични известия.' : 'Няма нови известия.' }}</p>
+    }
+    <div class="list">
+      @for (notification of notifications(); track notification.id) {
+        <div class="item-card">
+          <p><strong>Съобщение:</strong> {{ notification.message }}</p>
+          <p><strong>Тип:</strong> {{ notification.type }}</p>
+          <p><strong>Статус:</strong> {{ notification.status }}</p>
+          <p><strong>Изпратено на:</strong> {{ notification.sentAt | date:'dd.MM.yyyy, HH:mm' }}</p>
+          @if (notification.eventTitle) {
+            <p><strong>Събитие:</strong> {{ notification.eventTitle }}</p>
+          }
+          @if (notification.sessionTitle) {
+            <p><strong>Сесия:</strong> {{ notification.sessionTitle }}</p>
+          }
+          @if (notification.status !== 'READ') {
+            <div class="actions">
+              <button type="button" (click)="markAsRead(notification.id)">Отбележи като прочетено</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,71 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Редактирай категория билети</h2>
+
+  @if (isLoading()) {
+    <div class="text-center my-5">
+      <div class="spinner-border text-primary"></div>
+      <p class="mt-2">Зареждане...</p>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div class="alert alert-success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <form (ngSubmit)="updateCategory()">
+
+      <div class="mb-3">
+        <label class="form-label">Име на категория</label>
+        <input
+          class="form-control"
+          [(ngModel)]="category.name"
+          name="name"
+          required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Количество билети</label>
+        <input
+          type="number"
+          class="form-control"
+          [(ngModel)]="category.quantity"
+          name="quantity"
+          required
+          min="1">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Цена</label>
+        <input
+          type="number"
+          class="form-control"
+          [(ngModel)]="category.price"
+          name="price"
+          required
+          min="0"
+          step="0.01">
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        Запази промените
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary ms-2"
+        (click)="cancel()">
+        Отказ
+      </button>
+
+    </form>
+  }
+</div>

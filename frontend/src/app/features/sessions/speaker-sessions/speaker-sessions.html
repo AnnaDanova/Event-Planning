@@ -1,0 +1,37 @@
+<div class="page">
+  <div class="list-card">
+    <h2>Моите сесии</h2>
+    @if (errorMessage()) {
+      <p class="error-message">{{ errorMessage() }}</p>
+    }
+    @if (isLoading()) {
+      <p>Зареждане...</p>
+    }
+    @if (!isLoading() && !errorMessage()) {
+      @if (sessions().length === 0) {
+        <p>Все още не сте добавени като лектор към нито една сесия.</p>
+      }
+      @if (sessions().length > 0) {
+        <div class="list">
+          @for (session of sessions(); track session.id) {
+            <div class="item-card">
+              <h3>{{ session.title }}</h3>
+              <p>{{ session.description }}</p>
+              <p>
+                <strong>Начало:</strong>
+                {{ session.startTime | date:'dd.MM.yyyy HH:mm' }}
+              </p>
+              <p>
+                <strong>Край:</strong>
+                {{ session.endTime | date:'dd.MM.yyyy HH:mm' }}
+              </p>
+              <div class="actions">
+                <button [routerLink]="['/events', session.eventId, 'sessions', session.id, 'edit']">Редактирай</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>

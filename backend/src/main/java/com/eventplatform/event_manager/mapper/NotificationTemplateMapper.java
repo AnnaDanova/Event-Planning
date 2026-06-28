@@ -15,6 +15,7 @@ public class NotificationTemplateMapper {
         response.setId(template.getId());
         if (template.getEvent() != null) {
             response.setEventId(template.getEvent().getId());
+            response.setEventTitle(template.getEvent().getTitle());
         }
         response.setMessage(template.getMessage());
         response.setScheduledAt(template.getScheduledAt());
@@ -23,6 +24,7 @@ public class NotificationTemplateMapper {
         }
         if (template.getSession() != null) {
             response.setSessionId(template.getSession().getId());
+            response.setSessionTitle(template.getSession().getTitle());
         }
         return response;
     }

@@ -19,6 +19,15 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false)
+    private String firstName;
+
+    @Column(nullable = false)
+    private String lastName;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -29,6 +38,9 @@ public class User {
 
     @Column(name = "profile_photo")
     private String profilePhoto;
+
+    @Column(nullable = false)
+    private Boolean active = true;
 
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Event> organizedEvents;

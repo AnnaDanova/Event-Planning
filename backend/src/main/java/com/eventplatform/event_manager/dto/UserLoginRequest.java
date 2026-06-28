@@ -2,21 +2,18 @@ package com.eventplatform.event_manager.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-// TODO: validation, set get
 @Getter
 @Setter
 @NoArgsConstructor
 public class UserLoginRequest {
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be a valid email address")
+    @NotBlank(message = "Имейлът е задължителен!")
+    @Email(message = "Имейлът трябжа да е валиден имейл адрес!")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "Паролата е задължителна!")
     private String password;
 }
