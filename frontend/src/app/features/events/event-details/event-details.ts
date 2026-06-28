@@ -31,6 +31,18 @@ export class EventDetailsComponent implements OnInit {
     private ticketService: TicketService
   ) {}
 
+  isOrganizer(): boolean {
+    const loggedUser = localStorage.getItem('loggedUser');
+
+    if (!loggedUser || !this.event()) {
+      return false;
+    }
+
+    const user = JSON.parse(loggedUser);
+
+    return user.email === this.event()!.organizerEmail;
+  }
+
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
 

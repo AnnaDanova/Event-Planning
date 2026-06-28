@@ -70,7 +70,13 @@
                     Изчерпани
                   </span>
 
-                } @else {
+                } @else if (isOrganizer()) {
+
+                  <span class="badge bg-info mt-2">
+                    Вие сте организатор на това събитие
+                  </span>
+                }
+                @else {
 
                   <button
                     type="button"
