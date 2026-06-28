@@ -60,10 +60,10 @@
               </p>
 
               <p>
-                @if (event.lowestPrice > 0) {
+                @if (event.lowestPrice != null) {
                   От {{ event.lowestPrice | currency:'EUR':'symbol':'1.2-2' }}
                 } @else {
-                  Безплатно
+                  Все още няма публикувани билети
                 }
               </p>
 

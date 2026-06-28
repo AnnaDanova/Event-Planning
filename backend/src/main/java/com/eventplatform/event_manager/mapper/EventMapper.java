@@ -31,7 +31,7 @@ public class EventMapper {
             BigDecimal lowestPrice = event.getTicketCategories().stream()
                     .map(TicketCategory::getPrice)
                     .min(BigDecimal::compareTo)
-                    .orElse(BigDecimal.ZERO); // TODO: change to null
+                    .orElse(null);
             response.setLowestPrice(lowestPrice);
         }
         return response;

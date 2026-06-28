@@ -17,7 +17,7 @@ export interface EventShortResponse {
   endTime: string;
   category: string;
   status: string;
-  lowestPrice: number;
+  lowestPrice: number | null;
 }
 
 export interface EventDetailsResponse {

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
 import { EventShortResponse } from '../../../core/models/event.model';
 import { getErrorMessage } from '../../../core/utils/error-message.util';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-my-events',
@@ -18,37 +19,17 @@ export class MyEventsComponent implements OnInit {
   isLoading = signal(true);
   errorMessage = signal('');
 
-  constructor(private eventService: EventService) {}
+  constructor(private eventService: EventService, private authService: AuthService) {}
 
-  // ngOnInit(): void {
-  //
-  //   const userId = Number(localStorage.getItem('userId')) || 1; // TODO replace with authservice with userID from localstorage
-  //
-  //   this.eventService.getEventsByOrganizer(userId).subscribe({
-  //     next: (events) => {
-  //       this.events.set(events);
-  //       this.isLoading.set(false);
-  //     },
-  //     error: (err) => {
-  //       console.error(err);
-  //       this.errorMessage.set('Грешка при зареждане на твоите събития.');
-  //       this.isLoading.set(false);
-  //     }
-  //   });
-
-  // TODO replace with authservice
   ngOnInit(): void {
-    const loggedUser = localStorage.getItem('loggedUser');
+    const loggedUser = this.authService.loggedUser();
 
     if (!loggedUser) {
       this.errorMessage.set('Няма логнат потребител.');
       this.isLoading.set(false);
       return;
     }
-
-    const user = JSON.parse(loggedUser);
-
-    this.eventService.getEventsByOrganizer(user.id).subscribe({
+    this.eventService.getEventsByOrganizer(loggedUser.id).subscribe({
       next: (events) => {
         this.events.set(events);
         this.isLoading.set(false);
@@ -60,6 +41,4 @@ export class MyEventsComponent implements OnInit {
       }
     });
   }
-
-
 }

@@ -7,6 +7,7 @@ import { TicketCategoryService } from '../../../core/services/ticket-category.se
 import { TicketCategoryResponse } from '../../../core/models/ticket-category.model';
 import { TicketService } from '../../../core/services/ticket.service';
 import { getErrorMessage } from '../../../core/utils/error-message.util';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-event-details',
@@ -29,30 +30,26 @@ export class EventDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private eventService: EventService,
     private ticketCategoryService: TicketCategoryService,
-    private ticketService: TicketService
+    private ticketService: TicketService,
+    private authService: AuthService
   ) {}
 
   isOrganizer(): boolean {
-    const loggedUser = localStorage.getItem('loggedUser');
-
-    if (!loggedUser || !this.event()) {
+    const loggedUser = this.authService.loggedUser();
+    const event = this.event();
+    if (!loggedUser || !event) {
       return false;
     }
-
-    const user = JSON.parse(loggedUser);
-
-    return user.email === this.event()!.organizerEmail;
+    return loggedUser.email === event.organizerEmail;
   }
 
   ngOnInit(): void {
     this.eventId = Number(this.route.snapshot.paramMap.get('eventId'));
-
     if (!this.eventId) {
       this.errorMessage.set('Невалидно събитие.');
       this.isLoading.set(false);
       return;
     }
-
     this.loadEvent();
     this.loadTicketCategories();
   }
@@ -86,20 +83,12 @@ export class EventDetailsComponent implements OnInit {
     this.errorMessage.set('');
     this.successMessage.set('');
 
-    // TODO: replace with AuthService
-    const loggedUser = localStorage.getItem('loggedUser');
-
+    const loggedUser = this.authService.loggedUser();
     if (!loggedUser) {
       this.errorMessage.set('Трябва да сте влезли в профила си.');
       return;
     }
-
-    const user = JSON.parse(loggedUser);
-
-    const request = {
-      userId: user.id,
-      ticketCategoryId: categoryId
-    };
+    const request = {userId: loggedUser.id, ticketCategoryId: categoryId};
 
     this.ticketService.buyTicket(this.eventId, request).subscribe({
       next: () => {
